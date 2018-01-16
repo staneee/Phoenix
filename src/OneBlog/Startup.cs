@@ -25,6 +25,7 @@ using System;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using SS.MetaWeblog;
 
 namespace OneBlog
 {
@@ -99,7 +100,6 @@ namespace OneBlog
             {
                 options.ViewLocationExpanders.Add(new ThemeViewLocationExpander());
             });
-
             svcs.AddScoped<IPostsRepository, PostsRepository>();
             svcs.AddScoped<IDashboardRepository, DashboardRepository>();
             svcs.AddScoped<IStoreRepository, StoreRepository>();

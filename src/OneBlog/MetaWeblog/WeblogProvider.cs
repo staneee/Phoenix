@@ -4,7 +4,9 @@ using OneBlog.Data.Contracts;
 using OneBlog.Helpers;
 using OneBlog.Services;
 using Qiniu.IO;
+using SS.MetaWeblog;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -75,31 +77,7 @@ namespace OneBlog.MetaWeblog
             }
         }
 
-        public Post GetPost(string postid, string username, string password)
-        {
-            EnsureUser(username, password).Wait();
 
-            try
-            {
-                var story = _repo.GetPost(new Guid(postid));
-                var newPost = new Post()
-                {
-                    title = story.Title,
-                    description = story.Content,
-                    dateCreated = story.DatePublished,
-                    categories = story.Tags.Split(','),
-                    postid = story.Id,
-                    userid = "test",
-                    wp_slug = story.GetStoryUrl()
-                };
-
-                return newPost;
-            }
-            catch (Exception)
-            {
-                throw new MetaWeblogException("Failed to get the post.");
-            }
-        }
 
         private string GetFileName(string ext = "")
         {
@@ -142,22 +120,6 @@ namespace OneBlog.MetaWeblog
 
         }
 
-        public Post[] GetRecentPosts(string blogid, string username, string password, int numberOfPosts)
-        {
-            EnsureUser(username, password).Wait();
-
-            return _repo.GetPosts(numberOfPosts).Posts.Select(s => new Post()
-            {
-                title = s.Title,
-                description = s.Content,
-                categories = s.Tags.Select(m => m.TagName).ToArray(),
-                dateCreated = s.DatePublished,
-                postid = s.Id,
-                permalink = s.Slug,
-                wp_slug = s.Slug
-            }).ToArray();
-        }
-
         public bool DeletePost(string key, string postid, string username, string password, bool publish)
         {
             EnsureUser(username, password).Wait();
@@ -174,32 +136,7 @@ namespace OneBlog.MetaWeblog
             }
         }
 
-        public BlogInfo[] GetUsersBlogs(string key, string username, string password)
-        {
-            var task = EnsureUser(username, password);
-            var user = task.Result;
-            var blog = new BlogInfo()
-            {
-                blogid = user.Id,
-                blogName = user.DisplayName,
-                url = "/"
-            };
 
-            return new BlogInfo[] { blog };
-        }
-
-        public UserInfo GetUserInfo(string key, string username, string password)
-        {
-            var task = EnsureUser(username, password);
-            var user = task.Result;
-            return new UserInfo()
-            {
-                email = user.Email,
-                nickname = user.DisplayName,
-                userid = user.Id,
-                url = "/"
-            };
-        }
 
         private async Task<ApplicationUser> EnsureUser(string username, string password)
         {
@@ -233,6 +170,72 @@ namespace OneBlog.MetaWeblog
 
             // We don't store these, just query them from the list of stories so don't do anything
             return 1;
+        }
+
+        public async Task<UserInfo> GetUserInfoAsync(string key, string username, string password)
+        {
+            var user = await EnsureUser(username, password);
+            return new UserInfo()
+            {
+                email = user.Email,
+                nickname = user.DisplayName,
+                userid = user.Id,
+                url = "/"
+            };
+        }
+
+        public async Task<IList<BlogInfo>> GetUsersBlogsAsync(string key, string username, string password)
+        {
+            var user = await EnsureUser(username, password);
+            var blog = new BlogInfo()
+            {
+                blogid = user.Id,
+                blogName = user.DisplayName,
+                url = "/"
+            };
+
+            return new BlogInfo[] { blog };
+        }
+
+        public async Task<Post> GetPostAsync(string postid, string username, string password)
+        {
+            var user = await EnsureUser(username, password);
+            try
+            {
+                var story = _repo.GetPost(new Guid(postid));
+                var newPost = new Post()
+                {
+                    title = story.Title,
+                    description = story.Content,
+                    dateCreated = story.DatePublished,
+                    categories = story.Tags.Split(','),
+                    postid = story.Id,
+                    userid = "test",
+                    wp_slug = story.GetStoryUrl()
+                };
+
+                return newPost;
+            }
+            catch (Exception)
+            {
+                throw new MetaWeblogException("Failed to get the post.");
+            }
+        }
+
+        public async Task<IList<Post>> GetRecentPostsAsync(string blogid, string username, string password, int numberOfPosts)
+        {
+            var user = await EnsureUser(username, password);
+
+            return _repo.GetPosts(numberOfPosts).Posts.Select(s => new Post()
+            {
+                title = s.Title,
+                description = s.Content,
+                categories = s.Tags.Select(m => m.TagName).ToArray(),
+                dateCreated = s.DatePublished,
+                postid = s.Id,
+                permalink = s.Slug,
+                wp_slug = s.Slug
+            }).ToArray();
         }
     }
 }
