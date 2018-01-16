@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Hosting.Internal;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using OneBlog.Helpers;
 using OneBlog.Services;
 using System;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -79,7 +77,7 @@ namespace OneBlog.UEditor
             try
             {
 
-                var qiniuService = DI.ServiceProvider.GetRequiredService<QiniuService>();
+                var qiniuService = IocContainer.Get<QiniuService>();
                 var result = qiniuService.Upload(response.Content).Result;
 
                 if (!string.IsNullOrEmpty(result))

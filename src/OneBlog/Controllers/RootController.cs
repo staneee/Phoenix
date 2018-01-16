@@ -31,7 +31,7 @@ namespace OneBlog.Controllers
     {
 
         private IMailService _mailService;
-        private IPostsRepository _repo;
+        private IPostsRepository _postsRepository;
         private IMemoryCache _memoryCache;
         private ILogger<RootController> _logger;
         private ICommentsRepository _commentsRepository;
@@ -53,7 +53,7 @@ namespace OneBlog.Controllers
             _httpContextAccessor = httpContextAccessor;
             _viewRenderService = viewRenderService;
             _mailService = mailService;
-            _repo = repo;
+            _postsRepository = repo;
             _commentsRepository = commentsRepository;
             _memoryCache = memoryCache;
             _appSettings = appSettings;
@@ -83,7 +83,7 @@ namespace OneBlog.Controllers
             }
             if (result == null)
             {
-                result = _repo.GetPosts(_appSettings.Value.PostPerPage, page);
+                result = _postsRepository.GetPosts(_appSettings.Value.PostPerPage, page);
                 if (result != null)
                 {
                     cached = JsonConvert.SerializeObject(result);
@@ -112,7 +112,7 @@ namespace OneBlog.Controllers
         {
             try
             {
-                var count = _repo.AddPostCount(id);
+                var count = _postsRepository.AddPostCount(id);
                 return Json(new { Count = count });
             }
             catch
@@ -147,10 +147,10 @@ namespace OneBlog.Controllers
             {
                 if (result == null)
                 {
-                    var post = _repo.FindById(id);
+                    var post = _postsRepository.FindById(id);
                     if (post != null)
                     {
-                        post.Content = _repo.FixContent(post.Content);
+                        post.Content = _postsRepository.FixContent(post.Content);
                         result = post;
                         cached = JsonConvert.SerializeObject(result);
                         _memoryCache.Set(cacheKey, cached, new MemoryCacheEntryOptions() { SlidingExpiration = TimeSpan.FromHours(12) });
@@ -172,12 +172,6 @@ namespace OneBlog.Controllers
         /// <returns></returns>
         [HttpGet("about")]
         public IActionResult About()
-        {
-            return View();
-        }
-
-        [HttpGet("PrivacyPolicy")]
-        public IActionResult PrivacyPolicy()
         {
             return View();
         }
@@ -289,7 +283,7 @@ namespace OneBlog.Controllers
                 Copyright = "© 2016-2017 huafenfei.com"
             };
 
-            var entries = _repo.GetPosts(_appSettings.Value.PostPerPage);
+            var entries = _postsRepository.GetPosts(_appSettings.Value.PostPerPage);
 
             foreach (var entry in entries.Posts)
             {
@@ -354,7 +348,7 @@ namespace OneBlog.Controllers
                 });
             }
             var replyToCommentId = Request.Form["hiddenReplyTo"].ToString();
-            var post = _repo.GetPost(model.PostId);
+            var post = _postsRepository.GetPost(model.PostId);
             var commentDetail = new CommentDetail() { PostId = model.PostId, Author = await GetCurrentUserAsync(), Content = model.Content };
             Guid parentId;
             if (!string.IsNullOrEmpty(replyToCommentId) && Guid.TryParse(replyToCommentId, out parentId))

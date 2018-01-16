@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -51,8 +50,6 @@ namespace OneBlog.Data
             builder.Entity<PostsInCategories>().ToTable("PostsInCategories");
             builder.Entity<TagsInPosts>().ToTable("TagsInPosts");
             builder.Entity<Comments>().ToTable("Comments");
-            builder.Entity<StoreApp>().ToTable("StoreApp");
-            builder.Entity<StoreCategories>().ToTable("StoreCategories");
 
             var typesToRegister = typeof(ApplicationDbContext).GetTypeInfo().Assembly.GetTypes()
                             .Where(type => !string.IsNullOrEmpty(type.Namespace))
@@ -70,14 +67,5 @@ namespace OneBlog.Data
             _factory.Configuring(optionsBuilder);
             base.OnConfiguring(optionsBuilder);
         }
-
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    var aspnetcore_env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        //    //var connectionString = _config[string.Equals(aspnetcore_env, "Development") ? "OneDb:ConnectionString_Test" : "OneDb:ConnectionString"];
-        //    optionsBuilder.UseSqlServer("Server=.;Database=OneBlog;User ID=sa;Password=abcd1234!");
-        //    base.OnConfiguring(optionsBuilder);
-        //}
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Autofac;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -23,38 +24,39 @@ using SS.MetaWeblog;
 using System;
 using System.Linq;
 using System.Text.Encodings.Web;
+using Autofac.Extensions.DependencyInjection;
 using System.Text.Unicode;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace OneBlog
 {
     public class Startup
     {
 
-        private IHostingEnvironment _env { get; }
-        private IConfiguration _conf { get; }
+        private IHostingEnvironment _hostingEnvironment { get; }
+        private IConfiguration _configuration { get; }
 
-
-        public Startup(IHostingEnvironment env, IConfiguration conf)
+        public Startup(IHostingEnvironment hostingEnvironment, IConfiguration configuration)
         {
             //中文支持
             //EncodingProvider provider = CodePagesEncodingProvider.Instance;
             //Encoding.RegisterProvider(provider);
-            _env = env;
-            _conf = conf;
+            _hostingEnvironment = hostingEnvironment;
+            _configuration = configuration;
         }
 
 
-        public void ConfigureServices(IServiceCollection svcs)
+        public IServiceProvider ConfigureServices(IServiceCollection svcs)
         {
-            svcs.AddMvcDI();
-            AspNetCoreHelper.ConfigureServices(svcs);
-            svcs.Configure<AppSettings>(_conf.GetSection(nameof(AppSettings)));
-            svcs.Configure<DataSettings>(_conf.GetSection(nameof(DataSettings)));
-            svcs.Configure<QiniuSettings>(_conf.GetSection(nameof(QiniuSettings)));
-            svcs.Configure<EditorSettings>(_conf.GetSection(nameof(EditorSettings)));
+
+            svcs.Configure<AppSettings>(_configuration.GetSection(nameof(AppSettings)));
+            svcs.Configure<DataSettings>(_configuration.GetSection(nameof(DataSettings)));
+            svcs.Configure<QiniuSettings>(_configuration.GetSection(nameof(QiniuSettings)));
+            svcs.Configure<EditorSettings>(_configuration.GetSection(nameof(EditorSettings)));
 
             svcs.AddSession();
-            svcs.AddResponseCompression();
             svcs.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
             svcs.AddResponseCompression(options =>
             {
@@ -67,7 +69,7 @@ namespace OneBlog
             });
 
 
-            if (_env.IsDevelopment())
+            if (_hostingEnvironment.IsDevelopment())
             {
                 svcs.AddTransient<IMailService, LoggingMailService>();
             }
@@ -85,7 +87,7 @@ namespace OneBlog
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
-            }).AddEntityFrameworkStores<ApplicationDbContext>();
+            }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
 
             svcs.Configure<WebEncoderOptions>(options =>
@@ -97,23 +99,31 @@ namespace OneBlog
             {
                 options.ViewLocationExpanders.Add(new ThemeViewLocationExpander());
             });
-            svcs.AddScoped<IPostsRepository, PostsRepository>();
-            svcs.AddScoped<IDashboardRepository, DashboardRepository>();
-            svcs.AddScoped<IViewRenderService, ViewRenderService>();
-            svcs.AddScoped<ICommentsRepository, CommentsRepository>();
-            svcs.AddScoped<ITagsRepository, TagsRepository>();
-            svcs.AddScoped<IRolesRepository, RolesRepository>();
-            svcs.AddScoped<ILookupsRepository, LookupsRepository>();
-            svcs.AddScoped<ICategoriesRepository, CategoriesRepository>();
-            svcs.AddScoped<IUsersRepository, UsersRepository>();
 
-            svcs.AddTransient<JsonService>();
-            svcs.AddTransient<ApplicationInitializer>();
-            svcs.AddScoped<QiniuService>();
-            svcs.AddScoped<NavigationHelper>();
-            svcs.AddTransient<ApplicationEnvironment>();
+            var builder = new ContainerBuilder();
+            builder.RegisterType<PostsRepository>().As<IPostsRepository>();
+            builder.RegisterType<DashboardRepository>().As<IDashboardRepository>();
+            builder.RegisterType<ViewRenderService>().As<IViewRenderService>();
+            builder.RegisterType<CommentsRepository>().As<ICommentsRepository>();
+            builder.RegisterType<TagsRepository>().As<ITagsRepository>();
+            builder.RegisterType<RolesRepository>().As<IRolesRepository>();
+            builder.RegisterType<LookupsRepository>().As<ILookupsRepository>();
+            builder.RegisterType<CategoriesRepository>().As<ICategoriesRepository>();
+            builder.RegisterType<UsersRepository>().As<IUsersRepository>();
+            builder.RegisterType<DbContextFactory>().As<IDbContextFactory>();
 
-            svcs.AddTransient<IDbContextFactory, DbContextFactory>();
+            builder.RegisterType<UrlHelperFactory>().As<IUrlHelperFactory>();
+            builder.RegisterType<ActionContextAccessor>().As<IActionContextAccessor>();
+            builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>();
+
+            builder.RegisterType<JsonService>();
+            builder.RegisterType<ApplicationInitializer>();
+            builder.RegisterType<ApplicationEnvironment>();
+            builder.RegisterType<QiniuService>();
+            builder.RegisterType<NavigationHelper>();
+
+            builder.Populate(svcs);
+
             // Supporting Live Writer (MetaWeblogAPI)
             svcs.AddMetaWeblog<WeblogProvider>();
 
@@ -131,10 +141,12 @@ namespace OneBlog
             //var mvcCore = svcs.AddMvcCore();
             //mvcCore.AddJsonFormatters(options => options.ContractResolver = new CamelCasePropertyNamesContractResolver());
             // Add Https - renable once Azure Certs work
-            if (_env.IsProduction())
+            if (_hostingEnvironment.IsProduction())
             {
                 mvcBuilder.AddMvcOptions(options => options.Filters.Add(new RequireHttpsAttribute()));
             }
+
+            return IocContainer.RegisterAutofac(builder);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -144,13 +156,10 @@ namespace OneBlog
                               IServiceScopeFactory scopeFactory)
         {
 
-            //app.UseTimedJob();
-            app.UseMvcDI();
             app.UseResponseCompression();
-            AspNetCoreHelper.Configure(app, _env, loggerFactory);
             app.UseSession();
             // Add the following to the request pipeline only in development environment.
-            if (_env.IsDevelopment())
+            if (_hostingEnvironment.IsDevelopment())
             {
                 loggerFactory.AddDebug(LogLevel.Information);
                 app.UseDeveloperExceptionPage();
@@ -179,7 +188,7 @@ namespace OneBlog
 
             app.UseMvc();
 
-            if (_conf["OneDb:TestData"] != "True")
+            if (_configuration["OneDb:TestData"] != "True")
             {
                 using (var scope = scopeFactory.CreateScope())
                 {

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.IO;
 
 namespace OneBlog.Helpers
@@ -7,7 +9,7 @@ namespace OneBlog.Helpers
     {
         private static string DirectorySeparatorChar = Path.DirectorySeparatorChar.ToString();
 
-        private static string _ContentRootPath = AspNetCoreHelper.HostingEnvironment.ContentRootPath;
+        private static string _ContentRootPath = IocContainer.Get<IHostingEnvironment>().ContentRootPath;
 
         /// <summary>
         　　/// 获取文件绝对路径

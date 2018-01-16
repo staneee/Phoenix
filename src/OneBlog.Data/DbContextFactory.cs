@@ -13,32 +13,29 @@ namespace OneBlog.Data
 {
     public class DbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>, IDbContextFactory
     {
-
-        private DataSettings DataConfiguration { get; }
-        private string ConnectionString { get; set; }
-
+        /// <summary>
+        /// 数据配置项
+        /// </summary>
+        private DataSettings _dataSetting { get; }
 
         public DbContextFactory(IOptions<DataSettings> dataOptions)
         {
-            DataConfiguration = dataOptions.Value;
-            ConnectionString = DataConfiguration.ConnectionString;
+            _dataSetting = dataOptions.Value;
         }
 
         public void Configuring(DbContextOptionsBuilder optionsBuilder)
         {
-            var dataProviderConfig = DataConfiguration.Provider.ToString();
-            var selectedDataProvider = GetCurrentDataProvider(dataProviderConfig);
-            selectedDataProvider.Configuring(optionsBuilder, ConnectionString);
-        }
-
-        public static IDataProvider GetCurrentDataProvider(string dataProvider)
-        {
             var currentAssembly = typeof(DbContextFactory).GetTypeInfo().Assembly;
-            var allDataProviders = currentAssembly.GetTypes<IDataProvider>();
-            var selectedDataProvider = allDataProviders.SingleOrDefault(x => x.Provider.ToString() == dataProvider);
-            return selectedDataProvider;
+            var allDataProviders = currentAssembly.GetTypes<IDataProvider>();//获取所有数据提供类型
+            var selectedDataProvider = allDataProviders.SingleOrDefault(x => x.Provider == _dataSetting.Provider);
+            selectedDataProvider.Configuring(optionsBuilder, _dataSetting.ConnectionString);
         }
 
+        /// <summary>
+        /// 创建DB的方法
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public ApplicationDbContext CreateDbContext(string[] args)
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()

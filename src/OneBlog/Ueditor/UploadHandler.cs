@@ -35,7 +35,7 @@ namespace OneBlog.UEditor
             //    };
             //}
 
-            var qiniuService = DI.ServiceProvider.GetRequiredService<QiniuService>();
+            var qiniuService = IocContainer.Get<QiniuService>();
             byte[] uploadFileBytes = null;
             string uploadFileName = null;
             var url = string.Empty;

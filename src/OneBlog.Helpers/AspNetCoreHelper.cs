@@ -1,37 +1,23 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Primitives;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace OneBlog.Helpers
 {
     public static class AspNetCoreHelper
     {
-        public static void ConfigureServices(IServiceCollection services)
-        {
-            services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
-            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        }
-
-        public static void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            HostingEnvironment = env;
-        }
 
         public static HttpContext HttpContext
         {
             get
             {
-                var accessor = DI.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
+                var accessor = IocContainer.Get<IHttpContextAccessor>();
                 return accessor.HttpContext;
             }
         }
@@ -40,7 +26,7 @@ namespace OneBlog.Helpers
         {
             get
             {
-                var accessor = DI.ServiceProvider.GetRequiredService<IActionContextAccessor>();
+                var accessor = IocContainer.Get<IActionContextAccessor>(); 
                 return accessor.ActionContext;
             }
         }
@@ -49,16 +35,12 @@ namespace OneBlog.Helpers
         {
             get
             {
-                var urlHelperFactory = DI.ServiceProvider.GetRequiredService<IUrlHelperFactory>();
+
+                var urlHelperFactory = IocContainer.Get<IUrlHelperFactory>();
                 return urlHelperFactory.GetUrlHelper(ActionContext);
             }
         }
 
-        public static IHostingEnvironment HostingEnvironment
-        {
-            get;
-            private set;
-        }
 
         public static string GetRequestIP(bool tryUseXForwardHeader = true)
         {

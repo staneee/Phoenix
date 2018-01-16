@@ -4,10 +4,8 @@ using System.Collections.Generic;
 
 namespace OneBlog.Data
 {
-
-
     /// <summary>
-    /// UserName = Email 
+    /// 用户
     /// </summary>
     public class ApplicationUser : IdentityUser
     {
