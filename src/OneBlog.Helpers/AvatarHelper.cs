@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SS.Toolkit.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace OneBlog.Helpers
         /// <returns></returns>
         public static string GetRandomAvatar()
         {
-            Random r = new Random(GuidComb.GenerateComb().GetHashCode());
+            Random r = new Random(GuidHelper.Gen().GetHashCode());
             var number = r.Next(0, 9);
             return Defalut[number];
         }

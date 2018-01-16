@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.WebEncoders;
 using OneBlog.Configuration;
@@ -20,12 +19,11 @@ using OneBlog.Logger;
 using OneBlog.MetaWeblog;
 using OneBlog.Mvc;
 using OneBlog.Services;
-using Qiniu.Conf;
+using SS.MetaWeblog;
 using System;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
-using SS.MetaWeblog;
 
 namespace OneBlog
 {
@@ -48,7 +46,6 @@ namespace OneBlog
 
         public void ConfigureServices(IServiceCollection svcs)
         {
-            svcs.AddTimedJob();
             svcs.AddMvcDI();
             AspNetCoreHelper.ConfigureServices(svcs);
             svcs.Configure<AppSettings>(_conf.GetSection(nameof(AppSettings)));
@@ -102,7 +99,6 @@ namespace OneBlog
             });
             svcs.AddScoped<IPostsRepository, PostsRepository>();
             svcs.AddScoped<IDashboardRepository, DashboardRepository>();
-            svcs.AddScoped<IStoreRepository, StoreRepository>();
             svcs.AddScoped<IViewRenderService, ViewRenderService>();
             svcs.AddScoped<ICommentsRepository, CommentsRepository>();
             svcs.AddScoped<ITagsRepository, TagsRepository>();
@@ -171,8 +167,6 @@ namespace OneBlog
                 app.UseExceptionHandler("/Exception");
             }
 
-            // Rewrite old URLs to new URLs
-            //app.UseUrlRewriter();
 
             app.UseStaticFiles();
             // Support MetaWeblog API

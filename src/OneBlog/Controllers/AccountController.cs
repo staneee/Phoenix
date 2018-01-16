@@ -10,6 +10,7 @@ using OneBlog.Data;
 using OneBlog.Helpers;
 using OneBlog.Models.AccountViewModels;
 using OneBlog.Services;
+using SS.Toolkit.Helpers;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -324,7 +325,7 @@ namespace OneBlog.Controllers
             if (ModelState.IsValid)
             {
 
-                var md5 = Md5Helper.Parse(model.Email);//头像
+                var md5 = SecurityHelper.MD5(model.Email);//头像
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)

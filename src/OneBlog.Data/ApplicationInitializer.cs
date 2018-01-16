@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace OneBlog.Data
 {
+    /// <summary>
+    /// 数据初始化
+    /// </summary>
     public class ApplicationInitializer
     {
         private ApplicationDbContext _ctx;
@@ -22,9 +22,8 @@ namespace OneBlog.Data
         public async Task SeedAsync()
         {
             // Seed User
-            if (await _userMgr.FindByNameAsync("chenrensong@outlook.com") == null)
+            if (await _userMgr.FindByNameAsync("admin@chenrensong.com") == null)
             {
-
                 // 添加系统角色
                 if (!await _roleMgr.RoleExistsAsync("Administrator"))
                 {
@@ -42,38 +41,27 @@ namespace OneBlog.Data
 
                 var user_crs = new ApplicationUser()
                 {
-                    Email = "chenrensong@outlook.com",
-                    UserName = "chenrensong@outlook.com",
-                    DisplayName = "陈仁松",
-                    Signature = "根据当地的法律政策，该用户名不予显示",
+                    Email = "admin@chenrensong.com",
+                    UserName = "admin@chenrensong.com",
+                    DisplayName = "系统管理员",
+                    Signature = "Signature",
                     EmailConfirmed = true
                 };
 
-                var userResult = await _userMgr.CreateAsync(user_crs, "19890501Boycrs.."); // Temp Password
+                var userResult = await _userMgr.CreateAsync(user_crs, "admin");
 
-                if (!userResult.Succeeded) throw new InvalidProgramException("Failed to create seed user");
+                if (!userResult.Succeeded)
+                {
+                    throw new InvalidProgramException("Failed to create seed user");
+                }
 
                 // 为账号分配角色
                 var roleResult = await _userMgr.AddToRoleAsync(user_crs, "Administrator");
 
-                if (!roleResult.Succeeded) throw new InvalidProgramException("Failed to create seed role");
-
-
-
-                //var user_it = new ApplicationUser()
-                //{
-                //    Email = "icracker@msn.com",
-                //    UserName = "icracker@msn.com",
-                //    DisplayName = "IT资讯",
-                //    EmailConfirmed = true
-                //};
-
-                //userResult = await _userMgr.CreateAsync(user_it, "19890501Boycrs.."); // Temp Password
-
-                //roleResult = await _userMgr.AddToRoleAsync(user_it, "Administrator");
-
-
-
+                if (!roleResult.Succeeded)
+                {
+                    throw new InvalidProgramException("Failed to create seed role");
+                }
 
             }
         }

@@ -17,12 +17,12 @@ namespace OneBlog.Data
         private DataSettings DataConfiguration { get; }
         private string ConnectionString { get; set; }
 
+
         public DbContextFactory(IOptions<DataSettings> dataOptions)
         {
             DataConfiguration = dataOptions.Value;
             ConnectionString = DataConfiguration.ConnectionString;
         }
-
 
         public void Configuring(DbContextOptionsBuilder optionsBuilder)
         {

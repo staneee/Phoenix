@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using OneBlog.Configuration;
-using OneBlog.Helpers;
 using Qiniu.Conf;
 using Qiniu.IO;
 using Qiniu.RS;
+using SS.Toolkit.Helpers;
+using SS.Toolkit.Http;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -45,7 +46,7 @@ namespace OneBlog.Services
             string url = string.Empty;
             using (var stream = httpContent.ReadAsStreamAsync().Result)
             {
-                Guid guid = GuidComb.GenerateComb();
+                Guid guid = GuidHelper.Gen();
                 url = await Upload(guid.ToString() + "." + fileExtension, stream);
             }
             return url;
@@ -73,7 +74,7 @@ namespace OneBlog.Services
             string url = string.Empty;
             using (var stream = file.OpenReadStream())
             {
-                Guid guid = GuidComb.GenerateComb();
+                Guid guid = GuidHelper.Gen();
                 url = await Upload(guid.ToString() + "." + fileExtension, stream);
             }
             return url;
@@ -83,9 +84,7 @@ namespace OneBlog.Services
         {
             Guid guid = Guid.NewGuid();
             AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-            var result = await asyncHttpClient
-                .UserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36")
-                .Referer(uri.AbsoluteUri).Uri(uri).Get();
+            var result = await asyncHttpClient.DefaultUserAgent().Referer(uri.AbsoluteUri).Uri(uri).Get();
             string fileExtension = "png";
             return await Upload(guid.ToString() + "." + fileExtension, result.GetBytes());
         }
@@ -110,7 +109,7 @@ namespace OneBlog.Services
         public async Task<string> Upload(byte[] buffer)
         {
             string fileExtension = "png";
-            Guid guid = GuidComb.GenerateComb();
+            Guid guid = GuidHelper.Gen();
             return await Upload(guid.ToString() + "." + fileExtension, buffer);
         }
     }

@@ -15,28 +15,29 @@ namespace OneBlog.Data
         {
             _factory = factory;
         }
-
-
         /// <summary>
         /// 文章
         /// </summary>
         public DbSet<Posts> Posts { get; set; }
-
+        /// <summary>
+        /// Tag
+        /// </summary>
         public DbSet<Tags> Tags { get; set; }
-
-        public DbSet<StoreCategories> StoreCategories { get; set; }
-
-        public DbSet<StoreApp> StoreApp { get; set; }
-
         /// <summary>
         /// 分类
         /// </summary>
         public DbSet<Categories> Categories { get; set; }
-
+        /// <summary>
+        /// 评论
+        /// </summary>
         public DbSet<Comments> Comments { get; set; }
-
+        /// <summary>
+        /// 文章和分类关系
+        /// </summary>
         public DbSet<PostsInCategories> PostsInCategories { get; set; }
-
+        /// <summary>
+        /// 分类和文章关系
+        /// </summary>
         public DbSet<TagsInPosts> TagsInPosts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -56,6 +57,7 @@ namespace OneBlog.Data
             var typesToRegister = typeof(ApplicationDbContext).GetTypeInfo().Assembly.GetTypes()
                             .Where(type => !string.IsNullOrEmpty(type.Namespace))
                             .Where(type => type.FullName.Contains("OneBlog.Data.Mapping"));
+
             foreach (var type in typesToRegister)
             {
                 IEntityMapping mapping = (IEntityMapping)Activator.CreateInstance(type);

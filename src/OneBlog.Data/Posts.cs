@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using OneBlog.Helpers;
+using SS.Toolkit.Helpers;
 
 namespace OneBlog.Data
 {
@@ -11,7 +12,7 @@ namespace OneBlog.Data
     {
         public Posts()
         {
-            Id = GuidComb.GenerateComb();
+            Id = GuidHelper.Gen();
         }
 
         public Guid Id { get; set; }

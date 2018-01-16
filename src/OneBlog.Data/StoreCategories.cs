@@ -1,4 +1,5 @@
 ﻿using OneBlog.Helpers;
+using SS.Toolkit.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace OneBlog.Data
     {
         public StoreCategories()
         {
-            Id = GuidComb.GenerateComb();
+            Id = GuidHelper.Gen();
         }
         [DataMember]
         public Guid Id { get; set; }

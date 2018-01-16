@@ -1,4 +1,5 @@
 ﻿using OneBlog.Helpers;
+using SS.Toolkit.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace OneBlog.Data
     {
         public Comments()
         {
-            Id = GuidComb.GenerateComb();
+            Id = GuidHelper.Gen();
         }
 
         public Guid Id { get; set; }

@@ -41,8 +41,6 @@ namespace OneBlog.Data
         /// </summary>
         public string SiteUrl { get; set; }
 
-
-
         public virtual IList<Posts> Posts { get; set; }
 
         public virtual IList<Comments> Comments { get; set; }
