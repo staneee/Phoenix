@@ -24,4 +24,4 @@
   1. Clone repository
   2. Open solution in Visual Studio 2017
   3. Builld and run solution to load website in the browser
-  4. Use admin@chenrensong.com/admin to log into website administration
+  4. Use admin@chenrensong.com/admin@chenrensong to log into website administration

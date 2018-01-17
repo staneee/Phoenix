@@ -14,5 +14,7 @@ namespace OneBlog.Configuration
         public int PostPerPage { get; set; }
 
         public string Theme { get; set; }
+
+        public bool TestData { get; set; }
     }
 }

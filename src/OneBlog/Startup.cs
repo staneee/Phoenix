@@ -29,6 +29,8 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
 namespace OneBlog
 {
     public class Startup
@@ -153,7 +155,7 @@ namespace OneBlog
         public void Configure(IApplicationBuilder app,
                               ILoggerFactory loggerFactory,
                               IMailService mailService,
-                              IServiceScopeFactory scopeFactory)
+                              IServiceScopeFactory scopeFactory,IOptions<AppSettings> appSettings)
         {
 
             //app.UseTimedJob();
@@ -189,14 +191,14 @@ namespace OneBlog
 
             app.UseMvc();
 
-            //if (_conf["OneDb:TestData"] != "True")
-            //{
-            //    using (var scope = scopeFactory.CreateScope())
-            //    {
-            //        var initializer = scope.ServiceProvider.GetService<ApplicationInitializer>();
-            //        initializer.SeedAsync().Wait();
-            //    }
-            //}
+            if (appSettings.Value.TestData)
+            {
+                using (var scope = scopeFactory.CreateScope())
+                {
+                    var initializer = scope.ServiceProvider.GetService<ApplicationInitializer>();
+                    initializer.SeedAsync().Wait();
+                }
+            }
         }
     }
 }

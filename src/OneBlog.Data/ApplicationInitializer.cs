@@ -44,11 +44,11 @@ namespace OneBlog.Data
                     Email = "admin@chenrensong.com",
                     UserName = "admin@chenrensong.com",
                     DisplayName = "系统管理员",
-                    Signature = "Signature",
+                    Signature = "OneBlog 系统管理员",
                     EmailConfirmed = true
                 };
 
-                var userResult = await _userMgr.CreateAsync(user_crs, "admin");
+                var userResult = await _userMgr.CreateAsync(user_crs, "admin@chenrensong");
 
                 if (!userResult.Succeeded)
                 {
