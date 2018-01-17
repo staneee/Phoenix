@@ -577,9 +577,9 @@ namespace OneBlog.Data
             var post = _ctx.Posts.FirstOrDefault(m => m.Id == id);
             if (post != null)
             {
-                post.Count += 1;
+                post.ReadCount += 1;
                 _ctx.SaveChanges();
-                return post.Count;
+                return post.ReadCount;
             }
             return 1;
         }

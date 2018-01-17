@@ -13,7 +13,7 @@
     @Html.AntiForgeryToken()
     <div class="nav-user">
         <div class="nav-user-info">
-            <div class="nav-user-img"><img src="@Url.Action("Avatar", "Account", new { md5 = Md5Helper.Parse(CurrentUser.UserName) })" /></div>
+            <div class="nav-user-img"><img src="@Url.Action("Avatar", "Account", new { md5 =SS.Toolkit.Helpers.SecurityHelper.MD5(CurrentUser.UserName) })" /></div>
             <div class="nav-user-name text-ellipsis">@CurrentUser.DisplayName</div>
         </div>
         @this.BodyContent

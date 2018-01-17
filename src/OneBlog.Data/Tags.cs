@@ -10,11 +10,14 @@ namespace OneBlog.Data
         public Tags()
         {
             Id = GuidHelper.Gen();
+            CreateTime = DateTime.Now;
         }
 
         public Guid Id { get; set; }
 
         public string TagName { get; set; }
+
+        public DateTime CreateTime { get; set; }
 
         public virtual IList<TagsInPosts> TagsInPosts { get; set; }
     }

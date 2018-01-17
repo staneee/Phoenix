@@ -52,7 +52,7 @@ namespace OneBlog.Data.Models.ManageViewModels
             get
             {
                 var comments = new List<CommentItem>();
-                var list = _ctx.Comments.Include(m=>m.Author).OrderByDescending(m => m.CommentDate).Take(5).ToList();
+                var list = _ctx.Comments.Include(m=>m.Author).OrderByDescending(m => m.CreateDate).Take(5).ToList();
                 foreach (var c in list)
                 {
                     comments.Add(_jsonService.GetComment(c, _comments));

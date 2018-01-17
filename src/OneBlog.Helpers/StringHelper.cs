@@ -1137,16 +1137,6 @@ namespace OneBlog.Helpers
             return amount != null ? $"{amount:C}" : "n/a";
         }
 
-        /// <summary>
-        /// Converts markdown into HTML
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public static string ConvertMarkDown(string str)
-        {
-            var md = new MarkdownSharp.Markdown { AutoHyperlink = true, LinkEmails = false };
-            return md.Transform(str);
-        }
 
         /// <summary>
         /// 暂时废弃

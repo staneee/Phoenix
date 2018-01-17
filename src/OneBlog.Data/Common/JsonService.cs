@@ -46,7 +46,7 @@ namespace OneBlog.Data.Common
                 Slug = post.Slug,
                 RelativeLink = "/post/" + post.Id,
                 CommentsCount = post.Comments != null ? post.Comments.Count : 0,
-                ReadCount = post.Count,
+                ReadCount = post.ReadCount,
                 DatePublished = post.DatePublished,
                 DateCreated = post.DatePublished.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture),
                 Categories = GetCategories(categories),
@@ -216,7 +216,7 @@ namespace OneBlog.Data.Common
             };
             jc.Content = c.Content;
             jc.Title = c.Content.Length < 80 ? c.Content : c.Content.Substring(0, 80) + "...";
-            jc.DateCreated = c.CommentDate.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+            jc.DateCreated = c.CreateDate.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
             jc.HasChildren = postComments.Where(pc => pc.ParentId == c.Id).FirstOrDefault() != null;
             return jc;
         }

@@ -11,6 +11,7 @@
     addComment: function (e) {
         var content = One.comments.contentBox.val();
         var captcha = One.comments.captcha.val();
+        console.log('test');
         if (!captcha) {
             toastr.error("请填写验证码~");
             return false;
@@ -19,6 +20,7 @@
             toastr.error("请填写内容~");
             return false;
         }
+
         var l = Ladda.create(document.getElementById('btnSaveAjax'));
         l.start();
         var formData = $(".isso-postbox input,textarea").map(function () {

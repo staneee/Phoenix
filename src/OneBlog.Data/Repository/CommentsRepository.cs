@@ -32,7 +32,7 @@ namespace OneBlog.Data.Contracts
             try
             {
                 var post = _ctx.Posts.Where(p => p.Id == item.PostId).FirstOrDefault();
-                c.CommentDate = DateTime.Now;
+                c.CreateDate = DateTime.Now;
                 c.ParentId = item.ParentId;
                 c.IsApproved = true;
                 c.Content = item.Content;

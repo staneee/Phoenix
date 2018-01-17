@@ -1,9 +1,5 @@
-﻿using OneBlog.Helpers;
-using SS.Toolkit.Helpers;
+﻿using SS.Toolkit.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace OneBlog.Data
 {
@@ -19,30 +15,40 @@ namespace OneBlog.Data
 
         public Guid Id { get; set; }
 
+        /// <summary>
+        /// 父Id
+        /// </summary>
+        public Guid ParentId { get; set; }
+
+        /// <summary>
+        /// 内容
+        /// </summary>
         public string Content { get; set; }
-
-        public DateTime CommentDate { get; set; }
-
-        public virtual ApplicationUser Author { get; set; }
 
         /// <summary>
         /// Ip地址
         /// </summary>
         public string Ip { get; set; }
 
-        public Guid ParentId { get; set; }
-
         /// <summary>
-        ///     Gets or sets a value indicating whether the Comment is approved.
+        /// Gets or sets a value indicating whether the Comment is approved.
         /// </summary>
         public bool IsApproved { get; set; }
 
-        public virtual Posts Posts { get; set; }
-
         /// <summary>
-        ///     Indicate if comment is spam
+        /// 是否是作弊
         /// </summary>
         public bool IsSpam { get; set; }
+
+        /// <summary>
+        /// 评论时间
+        /// </summary>
+        public DateTime CreateDate { get; set; }
+
+        public virtual Posts Posts { get; set; }
+
+        public virtual ApplicationUser Author { get; set; }
+
 
 
     }

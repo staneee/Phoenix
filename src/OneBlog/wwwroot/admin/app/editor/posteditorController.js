@@ -83,9 +83,7 @@
                     }
                 }
 
-                setPostCover('1', $scope.post.Cover1);
-                setPostCover('2', $scope.post.Cover2);
-                setPostCover('3', $scope.post.Cover3);
+                setPostCover('1', $scope.post.Cover);
 
                 var existingTags = [];
                 if ($scope.post.Tags != null) {
@@ -111,10 +109,7 @@
             return false;
         }
         $scope.post.Content = editorGetHtml();
-        $scope.post.Cover1 = getPostCover('1');
-        $scope.post.Cover2 = getPostCover('2');
-        $scope.post.Cover3 = getPostCover('3');
-
+        $scope.post.Cover = getPostCover('1');
 
         if ($scope.post.Content.length == 0) {
             toastr.error('Content field is required');
@@ -382,9 +377,7 @@ var newPost = {
     "Slug": "",
     "Categories": "",
     "Tags": "",
-    "Cover1": "",
-    "Cover2": "",
-    "Cover3": "",
+    "Cover": "",
     "Comments": "",
     "HasCommentsEnabled": true,
     "IsPublished": false
