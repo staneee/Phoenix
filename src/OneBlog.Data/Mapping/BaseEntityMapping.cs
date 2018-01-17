@@ -5,22 +5,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OneBlog.Data
+namespace OneBlog.Data.Mapping
 {
-
-    public interface IEntityMapping
+    public abstract class BaseEntityMapping
     {
-        void Execute(ModelBuilder builder);
+        public abstract void Execute(ModelBuilder builder);
     }
 
-    public abstract class EntityMapping<T> : IEntityMapping where T : class
+    public abstract class BaseEntityMapping<T> : BaseEntityMapping where T : class
     {
-        public EntityMapping()
+        public BaseEntityMapping()
         {
 
         }
 
-        public void Execute(ModelBuilder builder)
+        public override void Execute(ModelBuilder builder)
         {
             Execute(builder.Entity<T>());
         }

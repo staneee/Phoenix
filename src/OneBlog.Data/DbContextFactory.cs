@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OneBlog.Configuration;
 using OneBlog.Data.Providers;
@@ -13,15 +14,19 @@ namespace OneBlog.Data
 {
     public class DbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>, IDbContextFactory
     {
-        /// <summary>
-        /// 数据配置项
-        /// </summary>
-        private DataSettings _dataSetting { get; }
+
+        private DataSettings _dataSetting { get; set; }
+
+        public DbContextFactory()
+        {
+
+        }
 
         public DbContextFactory(IOptions<DataSettings> dataOptions)
         {
             _dataSetting = dataOptions.Value;
         }
+
 
         public void Configuring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -31,19 +36,36 @@ namespace OneBlog.Data
             selectedDataProvider.Configuring(optionsBuilder, _dataSetting.ConnectionString);
         }
 
-        /// <summary>
-        /// 创建DB的方法
-        /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
         public ApplicationDbContext CreateDbContext(string[] args)
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .Build();
+            var dataSetting = JsonConfigurationHelper.GetAppSettings<DataSettings>(nameof(Configuration.DataSettings), configuration);
+            _dataSetting = dataSetting;
             var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
             return new ApplicationDbContext(this, builder.Options);
+        }
+    }
+
+    public class JsonConfigurationHelper
+    {
+        public static T GetAppSettings<T>(string key, IConfigurationRoot config) where T : class, new()
+        {
+            //IConfiguration config = new ConfigurationBuilder()
+            //    .SetBasePath(currentClassDir)
+            //    .Add(new JsonConfigurationSource { Path = "appsettings.json", Optional = false, ReloadOnChange = true })
+            //    .Build();
+
+            //IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
+            var appconfig = new ServiceCollection()
+                .AddOptions()
+                .Configure<T>(config.GetSection(key))
+                .BuildServiceProvider()
+                .GetService<IOptions<T>>()
+                .Value;
+            return appconfig;
         }
     }
 

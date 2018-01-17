@@ -3,12 +3,20 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Reflection;
+using OneBlog.Helpers;
+using OneBlog.Data.Mapping;
 
 namespace OneBlog.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         private readonly IDbContextFactory _factory;
+
+        public ApplicationDbContext()
+        {
+
+        }
+
         public ApplicationDbContext(IDbContextFactory factory, DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -51,14 +59,11 @@ namespace OneBlog.Data
             builder.Entity<TagsInPosts>().ToTable("TagsInPosts");
             builder.Entity<Comments>().ToTable("Comments");
 
-            var typesToRegister = typeof(ApplicationDbContext).GetTypeInfo().Assembly.GetTypes()
-                            .Where(type => !string.IsNullOrEmpty(type.Namespace))
-                            .Where(type => type.FullName.Contains("OneBlog.Data.Mapping"));
-
+            var currentAssembly = typeof(ApplicationDbContext).GetTypeInfo().Assembly;
+            var typesToRegister = currentAssembly.GetTypes<BaseEntityMapping>();//获取所有数据提供类型
             foreach (var type in typesToRegister)
             {
-                IEntityMapping mapping = (IEntityMapping)Activator.CreateInstance(type);
-                mapping.Execute(builder);
+                type.Execute(builder);
             }
         }
 

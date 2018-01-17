@@ -1,9 +1,12 @@
 ﻿using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,39 +27,39 @@ using SS.MetaWeblog;
 using System;
 using System.Linq;
 using System.Text.Encodings.Web;
-using Autofac.Extensions.DependencyInjection;
 using System.Text.Unicode;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
-
+using Autofac.Extensions.DependencyInjection;
 namespace OneBlog
 {
     public class Startup
     {
 
-        private IHostingEnvironment _hostingEnvironment { get; }
-        private IConfiguration _configuration { get; }
+        private IHostingEnvironment _env { get; }
+        private IConfiguration _conf { get; }
 
-        public Startup(IHostingEnvironment hostingEnvironment, IConfiguration configuration)
+
+        public Startup(IHostingEnvironment env, IConfiguration conf)
         {
             //中文支持
             //EncodingProvider provider = CodePagesEncodingProvider.Instance;
             //Encoding.RegisterProvider(provider);
-            _hostingEnvironment = hostingEnvironment;
-            _configuration = configuration;
+            _env = env;
+            _conf = conf;
         }
 
 
         public IServiceProvider ConfigureServices(IServiceCollection svcs)
         {
-
-            svcs.Configure<AppSettings>(_configuration.GetSection(nameof(AppSettings)));
-            svcs.Configure<DataSettings>(_configuration.GetSection(nameof(DataSettings)));
-            svcs.Configure<QiniuSettings>(_configuration.GetSection(nameof(QiniuSettings)));
-            svcs.Configure<EditorSettings>(_configuration.GetSection(nameof(EditorSettings)));
+            //svcs.AddMvcDI();
+            //AspNetCoreHelper.ConfigureServices(svcs);
+            var builder = new ContainerBuilder();
+            svcs.Configure<AppSettings>(_conf.GetSection(nameof(AppSettings)));
+            svcs.Configure<DataSettings>(_conf.GetSection(nameof(DataSettings)));
+            svcs.Configure<QiniuSettings>(_conf.GetSection(nameof(QiniuSettings)));
+            svcs.Configure<EditorSettings>(_conf.GetSection(nameof(EditorSettings)));
 
             svcs.AddSession();
+            svcs.AddResponseCompression();
             svcs.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
             svcs.AddResponseCompression(options =>
             {
@@ -69,7 +72,7 @@ namespace OneBlog
             });
 
 
-            if (_hostingEnvironment.IsDevelopment())
+            if (_env.IsDevelopment())
             {
                 svcs.AddTransient<IMailService, LoggingMailService>();
             }
@@ -87,7 +90,7 @@ namespace OneBlog
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
-            }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
 
 
             svcs.Configure<WebEncoderOptions>(options =>
@@ -100,30 +103,26 @@ namespace OneBlog
                 options.ViewLocationExpanders.Add(new ThemeViewLocationExpander());
             });
 
-            var builder = new ContainerBuilder();
-            builder.RegisterType<PostsRepository>().As<IPostsRepository>();
-            builder.RegisterType<DashboardRepository>().As<IDashboardRepository>();
-            builder.RegisterType<ViewRenderService>().As<IViewRenderService>();
-            builder.RegisterType<CommentsRepository>().As<ICommentsRepository>();
-            builder.RegisterType<TagsRepository>().As<ITagsRepository>();
-            builder.RegisterType<RolesRepository>().As<IRolesRepository>();
-            builder.RegisterType<LookupsRepository>().As<ILookupsRepository>();
-            builder.RegisterType<CategoriesRepository>().As<ICategoriesRepository>();
-            builder.RegisterType<UsersRepository>().As<IUsersRepository>();
-            builder.RegisterType<DbContextFactory>().As<IDbContextFactory>();
+            svcs.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
+            svcs.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            svcs.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            svcs.AddScoped<IPostsRepository, PostsRepository>();
+            svcs.AddScoped<IDashboardRepository, DashboardRepository>();
+            svcs.AddScoped<IViewRenderService, ViewRenderService>();
+            svcs.AddScoped<ICommentsRepository, CommentsRepository>();
+            svcs.AddScoped<ITagsRepository, TagsRepository>();
+            svcs.AddScoped<IRolesRepository, RolesRepository>();
+            svcs.AddScoped<ILookupsRepository, LookupsRepository>();
+            svcs.AddScoped<ICategoriesRepository, CategoriesRepository>();
+            svcs.AddScoped<IUsersRepository, UsersRepository>();
 
-            builder.RegisterType<UrlHelperFactory>().As<IUrlHelperFactory>();
-            builder.RegisterType<ActionContextAccessor>().As<IActionContextAccessor>();
-            builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>();
+            svcs.AddTransient<JsonService>();
+            svcs.AddTransient<ApplicationInitializer>();
+            svcs.AddScoped<QiniuService>();
+            svcs.AddScoped<NavigationHelper>();
+            svcs.AddTransient<ApplicationEnvironment>();
 
-            builder.RegisterType<JsonService>();
-            builder.RegisterType<ApplicationInitializer>();
-            builder.RegisterType<ApplicationEnvironment>();
-            builder.RegisterType<QiniuService>();
-            builder.RegisterType<NavigationHelper>();
-
-            builder.Populate(svcs);
-
+            svcs.AddTransient<IDbContextFactory, DbContextFactory>();
             // Supporting Live Writer (MetaWeblogAPI)
             svcs.AddMetaWeblog<WeblogProvider>();
 
@@ -141,11 +140,12 @@ namespace OneBlog
             //var mvcCore = svcs.AddMvcCore();
             //mvcCore.AddJsonFormatters(options => options.ContractResolver = new CamelCasePropertyNamesContractResolver());
             // Add Https - renable once Azure Certs work
-            if (_hostingEnvironment.IsProduction())
+            if (_env.IsProduction())
             {
                 mvcBuilder.AddMvcOptions(options => options.Filters.Add(new RequireHttpsAttribute()));
             }
 
+            builder.Populate(svcs);
             return IocContainer.RegisterAutofac(builder);
         }
 
@@ -156,10 +156,11 @@ namespace OneBlog
                               IServiceScopeFactory scopeFactory)
         {
 
+            //app.UseTimedJob();
             app.UseResponseCompression();
             app.UseSession();
             // Add the following to the request pipeline only in development environment.
-            if (_hostingEnvironment.IsDevelopment())
+            if (_env.IsDevelopment())
             {
                 loggerFactory.AddDebug(LogLevel.Information);
                 app.UseDeveloperExceptionPage();
@@ -188,14 +189,14 @@ namespace OneBlog
 
             app.UseMvc();
 
-            if (_configuration["OneDb:TestData"] != "True")
-            {
-                using (var scope = scopeFactory.CreateScope())
-                {
-                    var initializer = scope.ServiceProvider.GetService<ApplicationInitializer>();
-                    initializer.SeedAsync().Wait();
-                }
-            }
+            //if (_conf["OneDb:TestData"] != "True")
+            //{
+            //    using (var scope = scopeFactory.CreateScope())
+            //    {
+            //        var initializer = scope.ServiceProvider.GetService<ApplicationInitializer>();
+            //        initializer.SeedAsync().Wait();
+            //    }
+            //}
         }
     }
 }

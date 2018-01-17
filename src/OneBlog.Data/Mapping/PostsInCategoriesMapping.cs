@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace OneBlog.Data.Mapping
 {
 
-    public class PostsInCategoriesMapping : EntityMapping<PostsInCategories>
+    public class PostsInCategoriesMapping : BaseEntityMapping<PostsInCategories>
     {
 
         public override void Execute(EntityTypeBuilder<PostsInCategories> builder)

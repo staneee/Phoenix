@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace OneBlog.Data.Mapping
 {
 
-    public class CommentsMapping : EntityMapping<Comments>
+    public class CommentsMapping : BaseEntityMapping<Comments>
     {
 
         public override void Execute(EntityTypeBuilder<Comments> builder)
