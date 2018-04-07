@@ -21,7 +21,7 @@ namespace OneBlog.Data.Models
         /// Post ID
         /// </summary>
         [DataMember]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         /// Post title
         /// </summary>

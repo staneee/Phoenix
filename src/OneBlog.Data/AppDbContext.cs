@@ -1,43 +1,46 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Reflection;
-using OneBlog.Helpers;
+using Microsoft.EntityFrameworkCore.Providers;
+using Microsoft.Extensions.Options;
+using OneBlog.Configuration;
 using OneBlog.Data.Mapping;
+using OneBlog.Helpers;
+using System.Reflection;
 
 namespace OneBlog.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class AppDbContext : IdentityDbContext<AppUser>
     {
-        private readonly IDbContextFactory _factory;
+        private readonly DataSettings _dataSettings;
 
-        public ApplicationDbContext()
+        public AppDbContext(DbContextOptions<AppDbContext> options, DataSettings dataSettings)
+          : base(options)
         {
-
+            _dataSettings = dataSettings;
         }
 
-        public ApplicationDbContext(IDbContextFactory factory, DbContextOptions<ApplicationDbContext> options)
+        public AppDbContext( DbContextOptions<AppDbContext> options, IOptions<DataSettings> dataSettings)
             : base(options)
         {
-            _factory = factory;
+            _dataSettings = dataSettings.Value;
         }
+
         /// <summary>
         /// 文章
         /// </summary>
-        public DbSet<Posts> Posts { get; set; }
+        public DbSet<Post> Posts { get; set; }
         /// <summary>
         /// Tag
         /// </summary>
-        public DbSet<Tags> Tags { get; set; }
+        public DbSet<Tag> Tags { get; set; }
         /// <summary>
         /// 分类
         /// </summary>
-        public DbSet<Categories> Categories { get; set; }
+        public DbSet<Category> Categories { get; set; }
         /// <summary>
         /// 评论
         /// </summary>
-        public DbSet<Comments> Comments { get; set; }
+        public DbSet<Comment> Comments { get; set; }
         /// <summary>
         /// 文章和分类关系
         /// </summary>
@@ -52,14 +55,14 @@ namespace OneBlog.Data
             base.OnModelCreating(builder);
 
             // Override the name of the table because of a RC2 change
-            builder.Entity<Posts>().ToTable("Posts");
-            builder.Entity<Tags>().ToTable("Tags");
-            builder.Entity<Categories>().ToTable("Categories");
+            builder.Entity<Post>().ToTable("Posts");
+            builder.Entity<Tag>().ToTable("Tags");
+            builder.Entity<Category>().ToTable("Categories");
             builder.Entity<PostsInCategories>().ToTable("PostsInCategories");
             builder.Entity<TagsInPosts>().ToTable("TagsInPosts");
-            builder.Entity<Comments>().ToTable("Comments");
+            builder.Entity<Comment>().ToTable("Comments");
 
-            var currentAssembly = typeof(ApplicationDbContext).GetTypeInfo().Assembly;
+            var currentAssembly = typeof(AppDbContext).GetTypeInfo().Assembly;
             var typesToRegister = currentAssembly.GetTypes<BaseEntityMapping>();//获取所有数据提供类型
             foreach (var type in typesToRegister)
             {
@@ -69,7 +72,7 @@ namespace OneBlog.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            _factory.Configuring(optionsBuilder);
+            DataProviderFactory.GetDataProvider(_dataSettings.DbProvider).UseDb(optionsBuilder, _dataSettings.ConnectionString);
             base.OnConfiguring(optionsBuilder);
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using OneBlog.Helpers;
 using SS.Toolkit.Helpers;
 
@@ -8,14 +9,16 @@ namespace OneBlog.Data
     /// <summary>
     /// 文章列表
     /// </summary>
-    public class Posts
+    public class Post
     {
-        public Posts()
+        public Post()
         {
-            Id = GuidHelper.Gen();
+            Id = GuidHelper.Gen().ToString();
         }
 
-        public Guid Id { get; set; }
+        [Key]
+        [StringLength(100)]
+        public string Id { get; set; }
         /// <summary>
         /// 封面图片
         /// </summary>
@@ -48,6 +51,17 @@ namespace OneBlog.Data
         /// Tags 
         /// </summary>
         public string Tags { get; set; }
+
+        /// <summary>
+        /// 坐标
+        /// </summary>
+        public string Coordinate { get; set; }
+
+        /// <summary>
+        /// 地址
+        /// </summary>
+        public string Address { get; set; }
+
         /// <summary>
         /// 是否开启评论
         /// </summary>
@@ -63,11 +77,11 @@ namespace OneBlog.Data
         /// <summary>
         /// 作者
         /// </summary>
-        public virtual ApplicationUser Author { get; set; }
+        public virtual AppUser Author { get; set; }
 
         public virtual IList<PostsInCategories> PostsInCategories { get; set; }
 
-        public virtual IList<Comments> Comments { get; set; }
+        public virtual IList<Comment> Comments { get; set; }
 
         public virtual IList<TagsInPosts> TagsInPosts { get; set; }
 

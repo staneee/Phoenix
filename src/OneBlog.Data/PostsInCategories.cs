@@ -13,12 +13,12 @@ namespace OneBlog.Data
         {
         }
 
-        public Guid PostsId { get; set; }
+        public string PostsId { get; set; }
 
-        public Guid CategoriesId { get; set; }
+        public string CategoriesId { get; set; }
 
-        public virtual Posts Posts { get; set; }
+        public virtual Post Posts { get; set; }
 
-        public virtual Categories Categories { get; set; }
+        public virtual Category Categories { get; set; }
     }
 }

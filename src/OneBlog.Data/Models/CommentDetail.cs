@@ -13,15 +13,15 @@ namespace OneBlog.Data.Models
         /// <summary>
         ///     Gets or sets the Comment Id
         /// </summary>
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         ///     Parent comment Id
         /// </summary>
-        public Guid ParentId { get; set; }
+        public string ParentId { get; set; }
         /// <summary>
         ///     Comment post ID
         /// </summary>
-        public Guid PostId { get; set; }
+        public string PostId { get; set; }
         /// <summary>
         /// Comment title
         /// </summary>
@@ -31,7 +31,7 @@ namespace OneBlog.Data.Models
         /// </summary>
         public string Website { get; set; }
 
-        public ApplicationUser Author { get; set; }
+        public AppUser Author { get; set; }
 
         /// <summary>
         ///     Gets or sets the ip

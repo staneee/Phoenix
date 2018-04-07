@@ -169,10 +169,6 @@
 
 
 
-
-
-
-
     $scope.uploadFile = function (action, files) {
         var fd = new FormData();
         fd.append("file", files[0]);
@@ -372,9 +368,11 @@ var newPost = {
         DisplayName: "",
         Id: ""
     },
+    "Address":"",
     "Content": "",
     "DateCreated": moment().format("YYYY-MM-DD HH:mm"),
     "Slug": "",
+    "Coordinate":"",
     "Categories": "",
     "Tags": "",
     "Cover": "",

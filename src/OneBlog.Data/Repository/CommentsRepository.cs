@@ -16,10 +16,10 @@ namespace OneBlog.Data.Contracts
     public class CommentsRepository : ICommentsRepository
     {
 
-        private ApplicationDbContext _ctx;
+        private AppDbContext _ctx;
         private JsonService _jsonService;
-        private readonly UserManager<ApplicationUser> _userManager;
-        public CommentsRepository(ApplicationDbContext ctx, JsonService jsonService, UserManager<ApplicationUser> userManager)
+        private readonly UserManager<AppUser> _userManager;
+        public CommentsRepository(AppDbContext ctx, JsonService jsonService, UserManager<AppUser> userManager)
         {
             _ctx = ctx;
             _jsonService = jsonService;
@@ -28,7 +28,7 @@ namespace OneBlog.Data.Contracts
 
         public CommentItem Add(CommentDetail item)
         {
-            var c = new Comments();
+            var c = new Comment();
             try
             {
                 var post = _ctx.Posts.Where(p => p.Id == item.PostId).FirstOrDefault();
@@ -36,21 +36,24 @@ namespace OneBlog.Data.Contracts
                 c.ParentId = item.ParentId;
                 c.IsApproved = true;
                 c.Content = item.Content;
-
-                if (string.IsNullOrEmpty(item.Author.Id))
+                //if (string.IsNullOrEmpty(item.Author.Id))
+                //{
+                //    var guid = string.NewGuid().ToString().Replace("-", "");
+                //    var user = new AppUser { UserName = "anonymous_" + guid, Email = item.Author.Email, DisplayName = "匿名_" + item.Author.DisplayName };
+                //    user.Avatar = AvatarHelper.GetRandomAvatar();
+                //    var result = _userManager.CreateAsync(user).Result;
+                //    if (!result.Succeeded)
+                //    {
+                //        return null;
+                //    }
+                //    item.Author = user;
+                //}
+                if (item.Author != null)
                 {
-                    var guid = Guid.NewGuid().ToString().Replace("-", "");
-                    var user = new ApplicationUser { UserName = "anonymous_" + guid, Email = item.Author.Email, DisplayName = "匿名_" + item.Author.DisplayName };
-                    user.Avatar = AvatarHelper.GetRandomAvatar();
-                    var result = _userManager.CreateAsync(user).Result;
-                    if (!result.Succeeded)
-                    {
-                        return null;
-                    }
-                    item.Author = user;
+                    c.AuthorId = item.Author.Id;
+                    c.DisplayName = item.Author.DisplayName;
+                    c.SiteUrl = item.Author.SiteUrl;
                 }
-
-                c.Author = item.Author;
                 c.Ip = AspNetCoreHelper.GetRequestIP();
                 c.Posts = post;
                 _ctx.Comments.Add(c);
@@ -78,20 +81,20 @@ namespace OneBlog.Data.Contracts
             throw new NotImplementedException();
         }
 
-        public CommentDetail FindById(Guid id)
+        public CommentDetail FindById(string id)
         {
-            var comment = _ctx.Comments.Include(m => m.Posts).Include(m => m.Author).Where(m => m.Id == id).FirstOrDefault();
+            var comment = _ctx.Comments.Include(m => m.Posts).Where(m => m.Id == id).FirstOrDefault();
             return _jsonService.GetCommentDetail(comment);
         }
 
-        public List<CommentItem> FindByPostId(Guid postId)
+        public List<CommentItem> FindByPostId(string postId)
         {
-            var comments = _ctx.Comments.Include(m => m.Author).Include(m => m.Posts).Where(m => m.Posts.Id == postId).ToList();
+            var comments = _ctx.Comments.Include(m => m.Posts).Where(m => m.Posts.Id == postId).ToList();
             // instantiate object
             var nestedComments = new List<CommentItem>();
 
             // temporary ID/Comment table
-            var commentTable = new Dictionary<Guid, CommentItem>();
+            var commentTable = new Dictionary<string, CommentItem>();
 
             foreach (var comment in comments)
             {
@@ -100,7 +103,7 @@ namespace OneBlog.Data.Contracts
                 commentTable.Add(comment.Id, commentIten);
 
                 // check if this is a child comment
-                if (comment.ParentId == Guid.Empty)
+                if (comment.ParentId == string.Empty)
                 {
                     // root comment, so add it to the list
                     nestedComments.Add(commentIten);
@@ -132,7 +135,7 @@ namespace OneBlog.Data.Contracts
         public CommentsResult Get()
         {
             var vm = new CommentsResult();
-            var comments = _ctx.Comments.Include(m => m.Author).ToList();
+            var comments = _ctx.Comments.ToList();
             var items = new List<CommentItem>();
             foreach (var c in comments)
             {
@@ -144,9 +147,9 @@ namespace OneBlog.Data.Contracts
             return vm;
         }
 
-        public List<Comments> GetChildren(List<Comments> list)
+        public List<Comment> GetChildren(List<Comment> list)
         {
-            List<Comments> temp = new List<Comments>();
+            List<Comment> temp = new List<Comment>();
             foreach (var item in list)
             {
                 var newList = _ctx.Comments.Where(m => m.ParentId == item.Id).ToList();
@@ -157,7 +160,7 @@ namespace OneBlog.Data.Contracts
             return list;
         }
 
-        public bool Remove(Guid id)
+        public bool Remove(string id)
         {
             var item = (from cmn in _ctx.Comments
                         where cmn.Id == id

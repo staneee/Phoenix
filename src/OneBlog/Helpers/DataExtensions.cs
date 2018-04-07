@@ -9,7 +9,7 @@ namespace OneBlog.Helpers
   public static class DataExtensions
   {
     
-    public static string GetSummary(this Posts me)
+    public static string GetSummary(this Post me)
     {
       var MAXPARAGRAPHS = 2;
       var regex = new Regex("(<p[^>]*>.*?</p>)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
@@ -26,7 +26,7 @@ namespace OneBlog.Helpers
 
     }
 
-    public static string GetStoryUrl(this Posts story)
+    public static string GetStoryUrl(this Post story)
     {
       return string.Format("{0:0000}/{1:00}/{2:00}/{3}", story.DatePublished.Year, story.DatePublished.Month, story.DatePublished.Day, GetUrlSafeTitle(story));
     }
@@ -36,7 +36,7 @@ namespace OneBlog.Helpers
     //  return new Uri(new Uri(request.GetDisplayUrl()), story.GetStoryUrl());
     //}
 
-    public static string GetUrlSafeTitle(this Posts story)
+    public static string GetUrlSafeTitle(this Post story)
     {
       // Characters to replace with underscore
       char[] replacements = @" ""'?*.,+&:;\/#".ToCharArray();

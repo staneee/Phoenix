@@ -319,14 +319,19 @@ label {
     margin-bottom: 40px;
 }
 
-.warning {
-    background-color: #ea5a5a;
-    color: #fff;
-    padding: 10px 10px 10px 30px;
-    margin-bottom: 10px;
+.validation-summary-errors {
+    font-weight: bold !important;
+    color: #fff !important;
 }
 
-    .warning a {
+    .validation-summary-errors ul {
+        background-color: #ea5a5a;
+        color: #fff;
+        padding: 10px 10px 10px 30px;
+        margin-bottom: 10px;
+    }
+
+    .validation-summary-errors a {
         color: #fff;
     }
 
@@ -433,9 +438,5 @@ table {
 
     .account-header {
         display: none;
-    }
-
-    .warning {
-        margin: 0;
     }
 }

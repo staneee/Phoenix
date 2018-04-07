@@ -13,10 +13,10 @@ namespace OneBlog.Data
     {
         private Lookups lookups = new Lookups();
 
-        private UserManager<ApplicationUser> _userManager;
-        private ApplicationDbContext _ctx;
+        private UserManager<AppUser> _userManager;
+        private AppDbContext _ctx;
 
-        public LookupsRepository(UserManager<ApplicationUser> userManager, ApplicationDbContext ctx)
+        public LookupsRepository(UserManager<AppUser> userManager, AppDbContext ctx)
         {
             _ctx = ctx;
             _userManager = userManager;

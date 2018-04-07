@@ -4,15 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OneBlog.Configuration;
-using OneBlog.Data.Providers;
-using OneBlog.Helpers;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 
 namespace OneBlog.Data
 {
-    public class DbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>, IDbContextFactory
+    public class DbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
 
         private DataSettings _dataSetting { get; set; }
@@ -27,16 +23,7 @@ namespace OneBlog.Data
             _dataSetting = dataOptions.Value;
         }
 
-
-        public void Configuring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var currentAssembly = typeof(DbContextFactory).GetTypeInfo().Assembly;
-            var allDataProviders = currentAssembly.GetTypes<IDataProvider>();//获取所有数据提供类型
-            var selectedDataProvider = allDataProviders.SingleOrDefault(x => x.Provider == _dataSetting.Provider);
-            selectedDataProvider.Configuring(optionsBuilder, _dataSetting.ConnectionString);
-        }
-
-        public ApplicationDbContext CreateDbContext(string[] args)
+        public AppDbContext CreateDbContext(string[] args)
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -44,8 +31,8 @@ namespace OneBlog.Data
                 .Build();
             var dataSetting = JsonConfigurationHelper.GetAppSettings<DataSettings>(nameof(Configuration.DataSettings), configuration);
             _dataSetting = dataSetting;
-            var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            return new ApplicationDbContext(this, builder.Options);
+            var builder = new DbContextOptionsBuilder<AppDbContext>();
+            return new AppDbContext(builder.Options, _dataSetting);
         }
     }
 
@@ -69,8 +56,4 @@ namespace OneBlog.Data
         }
     }
 
-    public interface IDbContextFactory
-    {
-        void Configuring(DbContextOptionsBuilder optionsBuilder);
-    }
 }

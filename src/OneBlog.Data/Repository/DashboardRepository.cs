@@ -8,9 +8,9 @@ namespace OneBlog.Data.Repository
 {
     public class DashboardRepository : IDashboardRepository
     {
-        private ApplicationDbContext _ctx;
+        private AppDbContext _ctx;
 
-        public DashboardRepository(ApplicationDbContext ctx)
+        public DashboardRepository(AppDbContext ctx)
         {
             _ctx = ctx;
         }

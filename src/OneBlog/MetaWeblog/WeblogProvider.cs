@@ -16,10 +16,10 @@ namespace OneBlog.MetaWeblog
     public class WeblogProvider : IMetaWeblogProvider
     {
         private IPostsRepository _repo;
-        private UserManager<ApplicationUser> _userMgr;
+        private UserManager<AppUser> _userMgr;
         private QiniuService _qiniuService;
 
-        public WeblogProvider(UserManager<ApplicationUser> userMgr, IPostsRepository repo, QiniuService qiniuService)
+        public WeblogProvider(UserManager<AppUser> userMgr, IPostsRepository repo, QiniuService qiniuService)
         {
             _repo = repo;
             _userMgr = userMgr;
@@ -27,11 +27,11 @@ namespace OneBlog.MetaWeblog
         }
 
 
-        public string AddPost(string blogid, string username, string password, Post post, bool publish)
+        public string AddPost(string blogid, string username, string password, MetaPost post, bool publish)
         {
             EnsureUser(username, password).Wait();
 
-            var newStory = new Posts();
+            var newStory = new Data.Post();
             try
             {
                 newStory.Title = post.title;
@@ -52,13 +52,13 @@ namespace OneBlog.MetaWeblog
 
         }
 
-        public bool EditPost(string postid, string username, string password, Post post, bool publish)
+        public bool EditPost(string postid, string username, string password, MetaPost post, bool publish)
         {
             EnsureUser(username, password).Wait();
 
             try
             {
-                var story = _repo.GetPost(new Guid(postid));
+                var story = _repo.GetPost(postid);
 
                 story.Title = post.title;
                 story.Content = post.description;
@@ -86,7 +86,7 @@ namespace OneBlog.MetaWeblog
             return string.Format("{0}{1}{2}", DateTime.Now.ToString("yyyy/MM/dd/HHmmss"), random.Next(100000, 1000000), ext);
         }
 
-        public MediaObjectInfo NewMediaObject(string blogid, string username, string password, MediaObject mediaObject)
+        public MetaMediaObjectInfo NewMediaObject(string blogid, string username, string password, MetaMediaObject mediaObject)
         {
             EnsureUser(username, password).Wait();
 
@@ -96,7 +96,7 @@ namespace OneBlog.MetaWeblog
             var target = new IOClient();
 
             var key = GetFileName(ext);
-            MediaObjectInfo objectInfo = new MediaObjectInfo();
+            var objectInfo = new MetaMediaObjectInfo();
 
             var bits = Convert.FromBase64String(mediaObject.bits);
 
@@ -104,12 +104,12 @@ namespace OneBlog.MetaWeblog
             return objectInfo;
         }
 
-        public CategoryInfo[] GetCategories(string blogid, string username, string password)
+        public MetaCategoryInfo[] GetCategories(string blogid, string username, string password)
         {
             EnsureUser(username, password).Wait();
 
             return _repo.GetCategories()
-              .Select(c => new CategoryInfo()
+              .Select(c => new MetaCategoryInfo()
               {
                   categoryid = c,
                   title = c,
@@ -126,7 +126,7 @@ namespace OneBlog.MetaWeblog
 
             try
             {
-                var result = _repo.DeletePost(new Guid(postid));
+                var result = _repo.DeletePost(postid);
                 _repo.SaveAll();
                 return true;
             }
@@ -138,7 +138,7 @@ namespace OneBlog.MetaWeblog
 
 
 
-        private async Task<ApplicationUser> EnsureUser(string username, string password)
+        private async Task<AppUser> EnsureUser(string username, string password)
         {
             var user = await _userMgr.FindByNameAsync(username);
             if (user != null)
@@ -164,7 +164,7 @@ namespace OneBlog.MetaWeblog
             }
         }
 
-        public int AddCategory(string key, string username, string password, NewCategory category)
+        public int AddCategory(string key, string username, string password, MetaNewCategory category)
         {
             EnsureUser(username, password).Wait();
 
@@ -172,10 +172,10 @@ namespace OneBlog.MetaWeblog
             return 1;
         }
 
-        public async Task<UserInfo> GetUserInfoAsync(string key, string username, string password)
+        public async Task<MetaUserInfo> GetUserInfoAsync(string key, string username, string password)
         {
             var user = await EnsureUser(username, password);
-            return new UserInfo()
+            return new MetaUserInfo()
             {
                 email = user.Email,
                 nickname = user.DisplayName,
@@ -184,26 +184,26 @@ namespace OneBlog.MetaWeblog
             };
         }
 
-        public async Task<IList<BlogInfo>> GetUsersBlogsAsync(string key, string username, string password)
+        public async Task<IList<MetaBlogInfo>> GetUsersBlogsAsync(string key, string username, string password)
         {
             var user = await EnsureUser(username, password);
-            var blog = new BlogInfo()
+            var blog = new MetaBlogInfo()
             {
                 blogid = user.Id,
                 blogName = user.DisplayName,
                 url = "/"
             };
 
-            return new BlogInfo[] { blog };
+            return new MetaBlogInfo[] { blog };
         }
 
-        public async Task<Post> GetPostAsync(string postid, string username, string password)
+        public async Task<MetaPost> GetPostAsync(string postid, string username, string password)
         {
             var user = await EnsureUser(username, password);
             try
             {
-                var story = _repo.GetPost(new Guid(postid));
-                var newPost = new Post()
+                var story = _repo.GetPost(postid);
+                var newPost = new MetaPost()
                 {
                     title = story.Title,
                     description = story.Content,
@@ -222,11 +222,11 @@ namespace OneBlog.MetaWeblog
             }
         }
 
-        public async Task<IList<Post>> GetRecentPostsAsync(string blogid, string username, string password, int numberOfPosts)
+        public async Task<IList<MetaPost>> GetRecentPostsAsync(string blogid, string username, string password, int numberOfPosts)
         {
             var user = await EnsureUser(username, password);
 
-            return _repo.GetPosts(numberOfPosts).Posts.Select(s => new Post()
+            return _repo.GetPosts(numberOfPosts).Posts.Select(s => new MetaPost()
             {
                 title = s.Title,
                 description = s.Content,

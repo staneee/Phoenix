@@ -19,7 +19,7 @@ namespace OneBlog.Data.Models
         /// <summary>
         /// Post ID
         /// </summary>
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         /// Post title
         /// </summary>

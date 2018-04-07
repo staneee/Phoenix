@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using OneBlog.Data.Common;
 using OneBlog.Data.Contracts;
 using OneBlog.Data.Models;
@@ -9,24 +8,21 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Caching.Memory;
+using System.Threading.Tasks;
 
 namespace OneBlog.Data
 {
     public class PostsRepository : BaseRepository, IPostsRepository
     {
-        private ApplicationDbContext _ctx;
+        private AppDbContext _ctx;
         private JsonService _jsonService;
-        private UserManager<ApplicationUser> _userManager;
+        private UserManager<AppUser> _userManager;
 
-        public PostsRepository(ApplicationDbContext ctx,
+        public PostsRepository(AppDbContext ctx,
             JsonService jsonService,
-            UserManager<ApplicationUser> userManager
+            UserManager<AppUser> userManager
             )
         {
             _ctx = ctx;
@@ -99,12 +95,12 @@ namespace OneBlog.Data
             return _ctx.Posts.Where(p => p.Slug != null && p.Slug.ToLower() == slug.ToLower())
                 .FirstOrDefault() == null ? true : false;
         }
-        public static string GetStoryUrl(Posts story)
+        public static string GetStoryUrl(Post story)
         {
             return string.Format("{0:0000}/{1:00}/{2:00}/{3}", story.DatePublished.Year, story.DatePublished.Month, story.DatePublished.Day, GetUrlSafeTitle(story));
         }
 
-        public static string GetUrlSafeTitle(Posts story)
+        public static string GetUrlSafeTitle(Post story)
         {
             // Characters to replace with underscore
             char[] replacements = @" ""'?*.,+&:;\/#".ToCharArray();
@@ -124,7 +120,7 @@ namespace OneBlog.Data
         /// </summary>
         /// <param name="id">Post id</param>
         /// <returns>Post object</returns>
-        public PostDetail FindById(Guid id)
+        public PostDetail FindById(string id)
         {
             try
             {
@@ -154,7 +150,7 @@ namespace OneBlog.Data
 
         public PostDetail Add(PostDetail detail)
         {
-            var post = new Posts();
+            var post = new Post();
             UpdatePostDetail(detail, post);
             _ctx.Posts.Add(post);
             UpdatePostCategories(post, detail.Categories);
@@ -163,7 +159,7 @@ namespace OneBlog.Data
             return detail;
         }
 
-        private void UpdatePostDetail(PostDetail detail, Posts post)
+        private void UpdatePostDetail(PostDetail detail, Post post)
         {
             post.Title = detail.Title;
             //post.Author = string.IsNullOrEmpty(detail.Author) ? Security.CurrentUser.Identity.Name : detail.Author;
@@ -208,7 +204,7 @@ namespace OneBlog.Data
                 post.CoverImage = null;
             }
 
-            ApplicationUser user = null;
+            AppUser user = null;
 
             user = _ctx.Users.FirstOrDefault(m => m.Id == detail.Author.Id);
 
@@ -232,7 +228,7 @@ namespace OneBlog.Data
         }
 
 
-        private Task<ApplicationUser> GetCurrentUserAsync()
+        private Task<AppUser> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(AspNetCoreHelper.HttpContext.User);
         }
@@ -255,7 +251,7 @@ namespace OneBlog.Data
             return uniqueTags;
         }
 
-        void UpdatePostTags(Posts post, List<TagItem> tags)
+        void UpdatePostTags(Post post, List<TagItem> tags)
         {
             post.Tags = "";
             if (tags == null || tags.Count == 0)
@@ -283,7 +279,7 @@ namespace OneBlog.Data
                 }
                 else
                 {
-                    var tag = new Tags() { TagName = item };
+                    var tag = new Tag() { TagName = item };
                     _ctx.Tags.Add(tag);
                     _ctx.TagsInPosts.Add(new TagsInPosts() { PostId = post.Id, TagId = tag.Id });
                 }
@@ -295,7 +291,7 @@ namespace OneBlog.Data
             }
         }
 
-        void UpdatePostCategories(Posts post, IList<CategoryItem> categories)
+        void UpdatePostCategories(Post post, IList<CategoryItem> categories)
         {
             var releation = _ctx.PostsInCategories.Where(m => m.PostsId == post.Id).ToList();
             if (categories == null)
@@ -325,7 +321,7 @@ namespace OneBlog.Data
             }
         }
 
-        public void AddPost(Posts story)
+        public void AddPost(Post story)
         {
             _ctx.Posts.Add(story);
         }
@@ -335,16 +331,16 @@ namespace OneBlog.Data
             _ctx.SaveChanges();
         }
 
-        public PostsResult GetPosts(int pageSize = 16, int page = 1, Guid? authorId = null)
+        public PostsResult GetPosts(int pageSize = 16, int page = 1, string authorId = null)
         {
             var count = 0;
 
             // Fix random SQL Errors due to bad offset
             if (page < 1) { page = 1; }
             if (pageSize > 100) { pageSize = 100; }
-            List<Posts> posts = null;
+            List<Post> posts = null;
 
-            if (!authorId.HasValue)
+            if (!string.IsNullOrEmpty(authorId))
             {
                 posts = _ctx.Posts.Include(m => m.Author).Include(m => m.Comments)
                 .Where(s => s.IsPublished)
@@ -357,12 +353,12 @@ namespace OneBlog.Data
             else
             {
                 posts = _ctx.Posts.Include(m => m.Author).Include(m => m.Comments)
-                 .Where(s => s.IsPublished && (s.Author.Id == authorId.Value.ToString()))
+                 .Where(s => s.IsPublished && (s.Author.Id == authorId))
                  .OrderByDescending(s => s.DatePublished)
                  .Skip(pageSize * (page - 1))
                  .Take(pageSize)
                  .ToList();
-                count = _ctx.Posts.Include(m => m.Author).Where(s => s.IsPublished && (s.Author.Id == authorId.Value.ToString())).Count();
+                count = _ctx.Posts.Include(m => m.Author).Where(s => s.IsPublished && (s.Author.Id == authorId)).Count();
             }
 
             var postlist = new List<PostItem>();
@@ -437,22 +433,15 @@ namespace OneBlog.Data
         }
 
 
-        public Posts GetPost(Guid id)
+        public Post GetPost(string id)
         {
             var result = _ctx.Posts.Include(m => m.Comments).Where(b => b.Id == id).FirstOrDefault();
             return result;
         }
 
-        public Posts GetPost(string slug)
-        {
-            var result = _ctx.Posts
-              .Where(s => s.Slug == slug || s.Slug == slug.Replace('_', '-'))
-              .FirstOrDefault();
 
-            return result;
-        }
 
-        public bool DeletePost(Guid postid)
+        public bool DeletePost(string postid)
         {
             var id = postid;
             var story = _ctx.Posts.Where(w => w.Id == id).FirstOrDefault();
@@ -513,7 +502,7 @@ namespace OneBlog.Data
             return result;
         }
 
-        public PostsResult GetPostsByCategory(Guid categoryId, int pageSize, int page)
+        public PostsResult GetPostsByCategory(string categoryId, int pageSize, int page)
         {
             //var list = _ctx.PostsInCategories.Include(m => m.Posts).Include(m => m.Posts.Author).Include(m => m.Posts.Comments)
             //    .Where(m => m.CategoriesId == categoryId && m.Posts.IsPublished).Select(m => m.Posts);
@@ -572,7 +561,7 @@ namespace OneBlog.Data
 
         }
 
-        public long AddPostCount(Guid id)
+        public long AddPostCount(string id)
         {
             var post = _ctx.Posts.FirstOrDefault(m => m.Id == id);
             if (post != null)
@@ -587,6 +576,15 @@ namespace OneBlog.Data
         public bool CheckIsOnly(string title, string authorId)
         {
             return _ctx.Posts.Include(m => m.Author).FirstOrDefault(m => m.Author.Id == authorId && m.Title == title) != null;
+        }
+
+        public Post GetPostBySlug(string slug)
+        {
+            var result = _ctx.Posts
+                   .Where(s => s.Slug == slug || s.Slug == slug.Replace('_', '-'))
+                   .FirstOrDefault();
+
+            return result;
         }
     }
 }

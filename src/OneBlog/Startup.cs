@@ -83,16 +83,16 @@ namespace OneBlog
                 svcs.AddTransient<IMailService, MailService>();
             }
 
-            svcs.AddDbContext<ApplicationDbContext>(ServiceLifetime.Scoped);
+            svcs.AddDbContext<AppDbContext>(ServiceLifetime.Scoped);
 
-            svcs.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            svcs.AddIdentity<AppUser, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 6;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
-            }).AddEntityFrameworkStores<ApplicationDbContext>();
+            }).AddEntityFrameworkStores<AppDbContext>();
 
 
             svcs.Configure<WebEncoderOptions>(options =>
@@ -108,6 +108,8 @@ namespace OneBlog
             svcs.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
             svcs.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             svcs.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+
             svcs.AddScoped<IPostsRepository, PostsRepository>();
             svcs.AddScoped<IDashboardRepository, DashboardRepository>();
             svcs.AddScoped<IViewRenderService, ViewRenderService>();
@@ -119,12 +121,11 @@ namespace OneBlog
             svcs.AddScoped<IUsersRepository, UsersRepository>();
 
             svcs.AddTransient<JsonService>();
-            svcs.AddTransient<ApplicationInitializer>();
+            svcs.AddTransient<AppInitializer>();
             svcs.AddScoped<QiniuService>();
             svcs.AddScoped<NavigationHelper>();
             svcs.AddTransient<ApplicationEnvironment>();
 
-            svcs.AddTransient<IDbContextFactory, DbContextFactory>();
             // Supporting Live Writer (MetaWeblogAPI)
             svcs.AddMetaWeblog<WeblogProvider>();
 
@@ -195,7 +196,7 @@ namespace OneBlog
             {
                 using (var scope = scopeFactory.CreateScope())
                 {
-                    var initializer = scope.ServiceProvider.GetService<ApplicationInitializer>();
+                    var initializer = scope.ServiceProvider.GetService<AppInitializer>();
                     initializer.SeedAsync().Wait();
                 }
             }

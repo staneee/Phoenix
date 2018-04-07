@@ -20,17 +20,17 @@ namespace OneBlog.Controllers
     public class AccountController : Controller
     {
         private readonly IHostingEnvironment _env;
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly AppDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly IMailService _mailService;
         private readonly ILogger _logger;
         private readonly QiniuService _qiniuService;
 
-        public AccountController(ApplicationDbContext context,
+        public AccountController(AppDbContext context,
             QiniuService qiniuService,
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
             IMailService mailService,
             IHostingEnvironment env,
             ILoggerFactory loggerFactory)
@@ -192,7 +192,7 @@ namespace OneBlog.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, DisplayName = model.DisplayName };
+                var user = new AppUser { UserName = model.Email, Email = model.Email, DisplayName = model.DisplayName };
                 user.Avatar = AvatarHelper.GetRandomAvatar();
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -244,6 +244,7 @@ namespace OneBlog.Controllers
 
         //
         // POST: /Account/ExternalLogin
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -325,7 +326,7 @@ namespace OneBlog.Controllers
             {
 
                 var md5 = SecurityHelper.MD5(model.Email);//头像
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new AppUser { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -386,6 +387,7 @@ namespace OneBlog.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("setting")]
         public async Task<IActionResult> Setting()
         {
@@ -404,6 +406,7 @@ namespace OneBlog.Controllers
             return View(model);
         }
 
+        [Authorize]
         [HttpPost("setting")]
         public async Task<IActionResult> Setting(SettingViewModel model)
         {
@@ -423,7 +426,7 @@ namespace OneBlog.Controllers
             return Json(new { ErrNo = 1, ErrMsg = "更新资料失败,请重试~" });
         }
 
-
+        [Authorize]
         [HttpGet("modifypassword")]
         public async Task<IActionResult> ModifyPassword()
         {
@@ -440,6 +443,7 @@ namespace OneBlog.Controllers
             return View(model);
         }
 
+        [Authorize]
         [HttpPost("modifypassword")]
         public async Task<IActionResult> ModifyPassword(ModifyPasswordViewModel model)
         {
@@ -449,10 +453,11 @@ namespace OneBlog.Controllers
                 var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
                 if (result.Succeeded)
                 {
-                    return Json(new { ErrNo = 0, ErrMsg = "密码修改成功~" });
+                    return View("ModifyPasswordSuccess");
                 }
+                ModelState.AddModelError(string.Empty, "密码修改失败,请重试~");
             }
-            return Json(new { ErrNo = 1, ErrMsg = "密码修改失败,请重试~" });
+            return View(model);
         }
 
         //
@@ -762,7 +767,7 @@ namespace OneBlog.Controllers
             }
         }
 
-        private Task<ApplicationUser> GetCurrentUserAsync()
+        private Task<AppUser> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(HttpContext.User);
         }

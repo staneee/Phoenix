@@ -11,9 +11,9 @@ namespace OneBlog.Data
     public class CategoriesRepository : BaseRepository, ICategoriesRepository
     {
 
-        private ApplicationDbContext _ctx;
+        private AppDbContext _ctx;
 
-        public CategoriesRepository(ApplicationDbContext ctx)
+        public CategoriesRepository(AppDbContext ctx)
         {
             _ctx = ctx;
         }
@@ -27,7 +27,7 @@ namespace OneBlog.Data
             }
             try
             {
-                var newItem = new Categories();
+                var newItem = new Category();
                 newItem.Title = item.Title;
                 newItem.Description = item.Description;
                 if (item.Parent == null || string.IsNullOrEmpty(item.Parent.OptionValue))
@@ -36,7 +36,7 @@ namespace OneBlog.Data
                 }
                 else
                 {
-                    var pId = Guid.Parse(item.Parent.OptionValue);
+                    var pId = item.Parent.OptionValue;
                     newItem.ParentId = pId;
                 }
                 _ctx.Add(newItem);
@@ -56,9 +56,9 @@ namespace OneBlog.Data
             _ctx.SaveChanges();
         }
 
-        private SelectOption OptionById(Guid? id)
+        private SelectOption OptionById(string id)
         {
-            if (id == null || id == Guid.Empty)
+            if (id == null || id == string.Empty)
                 return null;
 
             var cat = (from c in _ctx.Categories.ToList() where c.Id == id select c).FirstOrDefault();
@@ -95,12 +95,12 @@ namespace OneBlog.Data
             return query.Skip(skip).Take(take);
         }
 
-        public CategoryItem FindById(Guid id)
+        public CategoryItem FindById(string id)
         {
             throw new NotImplementedException();
         }
 
-        public bool Remove(Guid id)
+        public bool Remove(string id)
         {
             try
             {

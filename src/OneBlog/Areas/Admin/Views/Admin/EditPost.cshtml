@@ -151,7 +151,6 @@
                             <textarea style="height:480px; width:100%;" id="txtContent" class="post"></textarea>
                         </div>
 
-
                         <div class="newpost-widget">
                             <label class="newpost-widget-title">封面(三图封面会更吸引读者)</label>
                             <br />
@@ -264,6 +263,15 @@
                                     <li ng-repeat="cat in lookups.CategoryList"><label><input type="checkbox" id="cat-{{cat.OptionValue}}" data-ng-model="cat.IsSelected" /> {{cat.OptionName}}</label></li>
                                     <li ng-if="lookups.CategoryList.length == 0" class="item-empty">{{lbl.empty}}</li>
                                 </ul>
+                            </div>
+                            <div class="newpost-widget newpost-widget-categories">
+                                <label class="newpost-widget-title">地图坐标</label>
+                                <a angular-tooltip tooltip="lbl.add" class="pull-right add-cat" target="_blank" href="http://api.map.baidu.com/lbsapi/getpoint/index.html"><i class="fa fa-map fa-sm"></i></a>
+                                <input type="text" class="form-control form-control-sm" id="txtCoordinate" name="txtCoordinate" data-ng-model="post.Coordinate" />
+                            </div>
+                            <div class="newpost-widget">
+                                <label class="newpost-widget-title">地图地址</label>
+                                <input type="text" class="form-control form-control-sm" id="txtAddress" name="txtAddress" data-ng-model="post.Address" />
                             </div>
                             <div class="newpost-widget">
                                 <label class="newpost-widget-title">{{lbl.tags}}</label>

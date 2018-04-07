@@ -7,7 +7,7 @@ namespace OneBlog.Data.Models
 {
     public class MenuItem
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         public string Title { get; set; }
 

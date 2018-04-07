@@ -19,7 +19,7 @@ namespace OneBlog.Data.Models
         /// Unique Id
         /// </summary>
         [DataMember]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         /// Title
         /// </summary>

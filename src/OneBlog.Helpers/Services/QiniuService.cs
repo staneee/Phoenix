@@ -46,7 +46,7 @@ namespace OneBlog.Services
             string url = string.Empty;
             using (var stream = httpContent.ReadAsStreamAsync().Result)
             {
-                Guid guid = GuidHelper.Gen();
+                string guid = GuidHelper.Gen().ToString();
                 url = await Upload(guid.ToString() + "." + fileExtension, stream);
             }
             return url;
@@ -74,7 +74,7 @@ namespace OneBlog.Services
             string url = string.Empty;
             using (var stream = file.OpenReadStream())
             {
-                Guid guid = GuidHelper.Gen();
+                string guid = GuidHelper.Gen().ToString();
                 url = await Upload(guid.ToString() + "." + fileExtension, stream);
             }
             return url;
@@ -82,7 +82,7 @@ namespace OneBlog.Services
 
         public async Task<string> Upload(Uri uri)
         {
-            Guid guid = Guid.NewGuid();
+            string guid = GuidHelper.Gen().ToString();
             AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
             var result = await asyncHttpClient.DefaultUserAgent().Referer(uri.AbsoluteUri).Uri(uri).Get();
             string fileExtension = "png";
@@ -109,7 +109,7 @@ namespace OneBlog.Services
         public async Task<string> Upload(byte[] buffer)
         {
             string fileExtension = "png";
-            Guid guid = GuidHelper.Gen();
+            string guid = GuidHelper.Gen().ToString();
             return await Upload(guid.ToString() + "." + fileExtension, buffer);
         }
     }

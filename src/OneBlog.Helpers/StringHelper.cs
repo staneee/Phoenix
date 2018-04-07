@@ -217,9 +217,9 @@ namespace OneBlog.Helpers
         /// </summary>
         /// <param name="csv"></param>
         /// <returns></returns>
-        public static List<Guid> CsvIdConverter(string csv)
+        public static List<string> CsvIdConverter(string csv)
         {
-            return csv.TrimStart(',').TrimEnd(',').Split(',').Select(Guid.Parse).ToList();
+            return csv.TrimStart(',').TrimEnd(',').Split(',').ToList();
         }
 
 

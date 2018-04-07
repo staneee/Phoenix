@@ -24,7 +24,7 @@ namespace OneBlog.Areas.Admin.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(Guid id)
+        public IActionResult Get(string id)
         {
             var result = repository.FindById(id);
             if (result == null)
@@ -54,11 +54,7 @@ namespace OneBlog.Areas.Admin.Controllers
 
         public IActionResult Delete(string id)
         {
-            Guid gId;
-            if (Guid.TryParse(id, out gId))
-            {
-                repository.Remove(gId);
-            }
+            repository.Remove(id);
             return Ok();
         }
 

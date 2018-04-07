@@ -43,10 +43,10 @@ namespace OneBlog.Helpers
             var urlHelper = AspNetCoreHelper.UrlHelper;
 
 
-            var table = new Dictionary<Guid, MenuItem>();
+            var table = new Dictionary<string, MenuItem>();
             var index = new MenuItem()
             {
-                Id = Guid.Empty,
+                Id = string.Empty,
                 Title = "首页",
                 Url = urlHelper.Action("index", "root"),
                 Route = new List<Data.Models.RouteData>() {
@@ -54,7 +54,7 @@ namespace OneBlog.Helpers
                         new Data.Models.RouteData() { Action = "pager", Controller = "root" }
                 }
             };
-            table.Add(Guid.Empty, index);
+            table.Add(string.Empty, index);
             menus.Add(index);
 
             var commonRoute = new List<Data.Models.RouteData>() { new Data.Models.RouteData() { Action = "index", Controller = "category" } };
@@ -73,7 +73,7 @@ namespace OneBlog.Helpers
                 }
                 else
                 {
-                    var guid = Guid.Parse(item.Parent.OptionValue);
+                    var guid = item.Parent.OptionValue;
                     var parentMenu = table[guid];
                     if (parentMenu != null)
                     {

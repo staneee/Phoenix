@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace OneBlog.Data.Migrations
 {
-    public partial class test : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -58,9 +58,9 @@ namespace OneBlog.Data.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<string>(maxLength: 100, nullable: false),
                     Description = table.Column<string>(nullable: true),
-                    ParentId = table.Column<Guid>(nullable: false),
+                    ParentId = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -72,7 +72,8 @@ namespace OneBlog.Data.Migrations
                 name: "Tags",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<string>(maxLength: 100, nullable: false),
+                    CreateTime = table.Column<DateTime>(nullable: false),
                     TagName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -190,16 +191,18 @@ namespace OneBlog.Data.Migrations
                 name: "Posts",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<string>(maxLength: 100, nullable: false),
+                    Address = table.Column<string>(nullable: true),
                     AuthorId = table.Column<string>(nullable: true),
                     Content = table.Column<string>(nullable: false),
-                    Count = table.Column<long>(nullable: false),
+                    Coordinate = table.Column<string>(nullable: true),
                     CoverImage = table.Column<string>(nullable: true),
                     DatePublished = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     HasCommentsEnabled = table.Column<bool>(nullable: false),
                     HasRecommendEnabled = table.Column<bool>(nullable: false),
                     IsPublished = table.Column<bool>(nullable: false),
+                    ReadCount = table.Column<long>(nullable: false),
                     Slug = table.Column<string>(nullable: true),
                     Tags = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true)
@@ -219,25 +222,22 @@ namespace OneBlog.Data.Migrations
                 name: "Comments",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<string>(maxLength: 100, nullable: false),
                     AuthorId = table.Column<string>(nullable: true),
-                    CommentDate = table.Column<DateTime>(nullable: false),
                     Content = table.Column<string>(nullable: true),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    DisplayName = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
                     Ip = table.Column<string>(nullable: true),
                     IsApproved = table.Column<bool>(nullable: false),
                     IsSpam = table.Column<bool>(nullable: false),
-                    ParentId = table.Column<Guid>(nullable: false),
-                    PostsId = table.Column<Guid>(nullable: true)
+                    ParentId = table.Column<string>(maxLength: 100, nullable: true),
+                    PostsId = table.Column<string>(nullable: true),
+                    SiteUrl = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Comments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Comments_AspNetUsers_AuthorId",
-                        column: x => x.AuthorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Comments_Posts_PostsId",
                         column: x => x.PostsId,
@@ -250,8 +250,8 @@ namespace OneBlog.Data.Migrations
                 name: "PostsInCategories",
                 columns: table => new
                 {
-                    PostsId = table.Column<Guid>(nullable: false),
-                    CategoriesId = table.Column<Guid>(nullable: false)
+                    PostsId = table.Column<string>(nullable: false),
+                    CategoriesId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -274,8 +274,8 @@ namespace OneBlog.Data.Migrations
                 name: "TagsInPosts",
                 columns: table => new
                 {
-                    PostId = table.Column<Guid>(nullable: false),
-                    TagId = table.Column<Guid>(nullable: false)
+                    PostId = table.Column<string>(nullable: false),
+                    TagId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -332,11 +332,6 @@ namespace OneBlog.Data.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comments_AuthorId",
-                table: "Comments",
-                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_PostsId",

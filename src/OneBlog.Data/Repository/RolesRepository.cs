@@ -18,9 +18,9 @@ namespace OneBlog.Data
     public class RolesRepository : IRolesRepository
     {
         private RoleManager<IdentityRole> _roleMgr;
-        ApplicationDbContext _context;
+        AppDbContext _context;
 
-        public RolesRepository(RoleManager<IdentityRole> roleMgr, ApplicationDbContext context)
+        public RolesRepository(RoleManager<IdentityRole> roleMgr, AppDbContext context)
         {
             _roleMgr = roleMgr;
             _context = context;

@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace OneBlog.Data
+﻿namespace OneBlog.Data
 {
-  public class BaseRepository
-  {
-    protected int CalculatePages(int totalCount, int pageSize)
+    public class BaseRepository
     {
-      return ((int)(totalCount / pageSize)) + ((totalCount % pageSize) > 0 ? 1 : 0);
+        protected int CalculatePages(int totalCount, int pageSize)
+        {
+            return ((int)(totalCount / pageSize)) + ((totalCount % pageSize) > 0 ? 1 : 0);
+        }
     }
-  }
 }

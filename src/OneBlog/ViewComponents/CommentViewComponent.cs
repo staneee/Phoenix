@@ -21,7 +21,7 @@ namespace OneBlog.ViewComponents
         }
 
 
-        public IViewComponentResult Invoke(Guid id)
+        public IViewComponentResult Invoke(string id)
         {
             var model = new CommentViewModel();
             model.PostId = id;

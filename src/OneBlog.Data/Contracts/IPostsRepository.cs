@@ -14,30 +14,30 @@ namespace OneBlog.Data.Contracts
         /// <param name="page"></param>
         /// <param name="authorId"></param>
         /// <returns></returns>
-        PostsResult GetPosts(int pageSize = 10, int page = 1, Guid? authorId = null);
+        PostsResult GetPosts(int pageSize = 10, int page = 1, string authorId = null);
         PostsResult GetPostsByTerm(string term, int pageSize, int page);
         PostsResult GetPostsByTag(string tag, int pageSize, int page);
 
-        PostsResult GetPostsByCategory(Guid categoryId, int pageSize, int page);
+        PostsResult GetPostsByCategory(string categoryId, int pageSize, int page);
 
-        Posts GetPost(Guid id);
+        Post GetPost(string id);
 
-        long AddPostCount(Guid id);
+        long AddPostCount(string id);
 
         bool CheckIsOnly(string title, string authorId);
 
-        PostDetail FindById(Guid id);
+        PostDetail FindById(string id);
 
-        Posts GetPost(string slug);
+        Post GetPostBySlug(string slug);
 
         PostDetail Add(PostDetail post);
 
         PostDetail Update(PostDetail post);
 
-        void AddPost(Posts story);
+        void AddPost(Post story);
 
         void SaveAll();
-        bool DeletePost(Guid postid);
+        bool DeletePost(string postid);
 
         IEnumerable<string> GetCategories();
 

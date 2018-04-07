@@ -36,12 +36,12 @@ namespace OneBlog.Controllers
         private ILogger<RootController> _logger;
         private ICommentsRepository _commentsRepository;
         private IViewRenderService _viewRenderService;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IOptions<AppSettings> _appSettings;
         private ISession _session => _httpContextAccessor.HttpContext.Session;
 
-        public RootController(IMailService mailService, UserManager<ApplicationUser> userManager,
+        public RootController(IMailService mailService, UserManager<AppUser> userManager,
                               IPostsRepository repo, ICommentsRepository commentsRepository,
                               IHttpContextAccessor httpContextAccessor,
                               IMemoryCache memoryCache,
@@ -108,7 +108,7 @@ namespace OneBlog.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost("postcount/{id?}")]
-        public IActionResult PostCount(Guid id)
+        public IActionResult PostCount(string id)
         {
             try
             {
@@ -127,7 +127,7 @@ namespace OneBlog.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("post/{id}")]
-        public IActionResult Post(Guid id)
+        public IActionResult Post(string id)
         {
             var cacheKey = $"Root_Post_{id}";
             string cached;
@@ -350,10 +350,9 @@ namespace OneBlog.Controllers
             var replyToCommentId = Request.Form["hiddenReplyTo"].ToString();
             var post = _postsRepository.GetPost(model.PostId);
             var commentDetail = new CommentDetail() { PostId = model.PostId, Author = await GetCurrentUserAsync(), Content = model.Content };
-            Guid parentId;
-            if (!string.IsNullOrEmpty(replyToCommentId) && Guid.TryParse(replyToCommentId, out parentId))
+            if (!string.IsNullOrEmpty(replyToCommentId))
             {
-                commentDetail.ParentId = parentId;
+                commentDetail.ParentId = replyToCommentId;
             }
             var comment = _commentsRepository.Add(commentDetail);
             var result = await _viewRenderService.RenderToStringAsync(this, "_Comment", comment);
@@ -367,7 +366,7 @@ namespace OneBlog.Controllers
             });
         }
 
-        private Task<ApplicationUser> GetCurrentUserAsync()
+        private Task<AppUser> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(HttpContext.User);
         }

@@ -18,9 +18,9 @@ namespace OneBlog.Areas.Admin.Controllers
     {
         private readonly IHostingEnvironment _env;
         private readonly IUsersRepository repository;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
 
-        public UsersController(UserManager<ApplicationUser> userManager, IUsersRepository repository, IHostingEnvironment env)
+        public UsersController(UserManager<AppUser> userManager, IUsersRepository repository, IHostingEnvironment env)
         {
             _userManager = userManager;
             _env = env;

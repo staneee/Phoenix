@@ -130,7 +130,7 @@ namespace OneBlog.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("posts/{id?}")]
-        public IActionResult Posts(Guid id)
+        public IActionResult Posts(string id)
         {
             var result = _postsRepository.FindById(id);
             if (result == null)
@@ -194,8 +194,8 @@ namespace OneBlog.Areas.Admin.Controllers
 
         //public IActionResult CategoriesDelete(string id)
         //{
-        //    Guid gId;
-        //    if (Guid.TryParse(id, out gId))
+        //    string gId;
+        //    if (string.TryParse(id, out gId))
         //        repository.Remove(gId);
         //    return Request.CreateResponse(HttpStatusCode.OK);
         //}

@@ -7,12 +7,12 @@ namespace OneBlog.Data
     /// <summary>
     /// 数据初始化
     /// </summary>
-    public class ApplicationInitializer
+    public class AppInitializer
     {
-        private ApplicationDbContext _ctx;
-        private UserManager<ApplicationUser> _userMgr;
+        private AppDbContext _ctx;
+        private UserManager<AppUser> _userMgr;
         private RoleManager<IdentityRole> _roleMgr;
-        public ApplicationInitializer(ApplicationDbContext ctx, UserManager<ApplicationUser> userMgr, RoleManager<IdentityRole> roleMgr)
+        public AppInitializer(AppDbContext ctx, UserManager<AppUser> userMgr, RoleManager<IdentityRole> roleMgr)
         {
             _ctx = ctx;
             _userMgr = userMgr;
@@ -39,7 +39,7 @@ namespace OneBlog.Data
                 }
                 // 创建账号
 
-                var user_crs = new ApplicationUser()
+                var user_crs = new AppUser()
                 {
                     Email = "admin@chenrensong.com",
                     UserName = "admin@chenrensong.com",

@@ -1,10 +1,7 @@
-﻿@{
-    ViewBag.Title = $"{ViewBag.Title} - 花纷飞";
-}
-<!DOCTYPE html>
-<html lang="zh-CN">
+﻿ <!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
@@ -18,28 +15,23 @@
         <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
         <link href="~/css/account.css" rel="stylesheet" asp-append-version="true" />
     </environment>
+    @RenderSection("Styles", required: false)
 </head>
 <body class="ltr">
     <div class="account">
         <div id="StatusBox">
             <div id="validationSummary" asp-validation-summary="All" class="text-danger"></div>
         </div>
-        <div class="account-box">
-            @RenderBody()
-        </div>
+        @RenderBody()
     </div>
-    @RenderSection("scripts", required: false)
-
     <environment names="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/account.js" asp-append-version="true"></script>
     </environment>
     <environment names="Production,Staging">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/account.js" asp-append-version="true"></script>
     </environment>
-
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

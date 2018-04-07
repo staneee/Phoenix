@@ -10,15 +10,14 @@ using System;
 
 namespace OneBlog.Data.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180117022458_data")]
-    partial class data
+    [DbContext(typeof(AppDbContext))]
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
+                .HasAnnotation("ProductVersion", "2.0.2-rtm-10011")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -129,7 +128,7 @@ namespace OneBlog.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("OneBlog.Data.ApplicationUser", b =>
+            modelBuilder.Entity("OneBlog.Data.AppUser", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -192,14 +191,15 @@ namespace OneBlog.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("OneBlog.Data.Categories", b =>
+            modelBuilder.Entity("OneBlog.Data.Category", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100);
 
                     b.Property<string>("Description");
 
-                    b.Property<Guid>("ParentId");
+                    b.Property<string>("ParentId");
 
                     b.Property<string>("Title");
 
@@ -208,10 +208,11 @@ namespace OneBlog.Data.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("OneBlog.Data.Comments", b =>
+            modelBuilder.Entity("OneBlog.Data.Comment", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100);
 
                     b.Property<string>("AuthorId");
 
@@ -219,34 +220,44 @@ namespace OneBlog.Data.Migrations
 
                     b.Property<DateTime>("CreateDate");
 
+                    b.Property<string>("DisplayName");
+
+                    b.Property<string>("Email");
+
                     b.Property<string>("Ip");
 
                     b.Property<bool>("IsApproved");
 
                     b.Property<bool>("IsSpam");
 
-                    b.Property<Guid>("ParentId");
+                    b.Property<string>("ParentId")
+                        .HasMaxLength(100);
 
-                    b.Property<Guid?>("PostsId");
+                    b.Property<string>("PostsId");
+
+                    b.Property<string>("SiteUrl");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
 
                     b.HasIndex("PostsId");
 
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("OneBlog.Data.Posts", b =>
+            modelBuilder.Entity("OneBlog.Data.Post", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Address");
 
                     b.Property<string>("AuthorId");
 
                     b.Property<string>("Content")
                         .IsRequired();
+
+                    b.Property<string>("Coordinate");
 
                     b.Property<string>("CoverImage");
 
@@ -277,9 +288,9 @@ namespace OneBlog.Data.Migrations
 
             modelBuilder.Entity("OneBlog.Data.PostsInCategories", b =>
                 {
-                    b.Property<Guid>("PostsId");
+                    b.Property<string>("PostsId");
 
-                    b.Property<Guid>("CategoriesId");
+                    b.Property<string>("CategoriesId");
 
                     b.HasKey("PostsId", "CategoriesId");
 
@@ -288,10 +299,11 @@ namespace OneBlog.Data.Migrations
                     b.ToTable("PostsInCategories");
                 });
 
-            modelBuilder.Entity("OneBlog.Data.Tags", b =>
+            modelBuilder.Entity("OneBlog.Data.Tag", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100);
 
                     b.Property<DateTime>("CreateTime");
 
@@ -304,9 +316,9 @@ namespace OneBlog.Data.Migrations
 
             modelBuilder.Entity("OneBlog.Data.TagsInPosts", b =>
                 {
-                    b.Property<Guid>("PostId");
+                    b.Property<string>("PostId");
 
-                    b.Property<Guid>("TagId");
+                    b.Property<string>("TagId");
 
                     b.HasKey("PostId", "TagId");
 
@@ -325,7 +337,7 @@ namespace OneBlog.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("OneBlog.Data.ApplicationUser")
+                    b.HasOne("OneBlog.Data.AppUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -333,7 +345,7 @@ namespace OneBlog.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("OneBlog.Data.ApplicationUser")
+                    b.HasOne("OneBlog.Data.AppUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -346,7 +358,7 @@ namespace OneBlog.Data.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("OneBlog.Data.ApplicationUser")
+                    b.HasOne("OneBlog.Data.AppUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -354,38 +366,34 @@ namespace OneBlog.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("OneBlog.Data.ApplicationUser")
+                    b.HasOne("OneBlog.Data.AppUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("OneBlog.Data.Comments", b =>
+            modelBuilder.Entity("OneBlog.Data.Comment", b =>
                 {
-                    b.HasOne("OneBlog.Data.ApplicationUser", "Author")
-                        .WithMany("Comments")
-                        .HasForeignKey("AuthorId");
-
-                    b.HasOne("OneBlog.Data.Posts", "Posts")
+                    b.HasOne("OneBlog.Data.Post", "Posts")
                         .WithMany("Comments")
                         .HasForeignKey("PostsId");
                 });
 
-            modelBuilder.Entity("OneBlog.Data.Posts", b =>
+            modelBuilder.Entity("OneBlog.Data.Post", b =>
                 {
-                    b.HasOne("OneBlog.Data.ApplicationUser", "Author")
+                    b.HasOne("OneBlog.Data.AppUser", "Author")
                         .WithMany("Posts")
                         .HasForeignKey("AuthorId");
                 });
 
             modelBuilder.Entity("OneBlog.Data.PostsInCategories", b =>
                 {
-                    b.HasOne("OneBlog.Data.Categories", "Categories")
+                    b.HasOne("OneBlog.Data.Category", "Categories")
                         .WithMany("PostsInCategories")
                         .HasForeignKey("CategoriesId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("OneBlog.Data.Posts", "Posts")
+                    b.HasOne("OneBlog.Data.Post", "Posts")
                         .WithMany("PostsInCategories")
                         .HasForeignKey("PostsId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -393,12 +401,12 @@ namespace OneBlog.Data.Migrations
 
             modelBuilder.Entity("OneBlog.Data.TagsInPosts", b =>
                 {
-                    b.HasOne("OneBlog.Data.Posts", "Posts")
+                    b.HasOne("OneBlog.Data.Post", "Posts")
                         .WithMany("TagsInPosts")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("OneBlog.Data.Tags", "Tags")
+                    b.HasOne("OneBlog.Data.Tag", "Tags")
                         .WithMany("TagsInPosts")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade);

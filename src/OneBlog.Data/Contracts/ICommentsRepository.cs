@@ -19,9 +19,9 @@ namespace OneBlog.Data.Contracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        CommentDetail FindById(Guid id);
+        CommentDetail FindById(string id);
 
-        List<CommentItem> FindByPostId(Guid postId);
+        List<CommentItem> FindByPostId(string postId);
         /// <summary>
         /// Add item
         /// </summary>
@@ -40,7 +40,7 @@ namespace OneBlog.Data.Contracts
         /// </summary>
         /// <param name="id">Item ID</param>
         /// <returns>True on success</returns>
-        bool Remove(Guid id);
+        bool Remove(string id);
         /// <summary>
         /// Delete all comments
         /// </summary>

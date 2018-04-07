@@ -1,24 +1,28 @@
 ﻿using SS.Toolkit.Helpers;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace OneBlog.Data
 {
     /// <summary>
     /// 评论
     /// </summary>
-    public class Comments
+    public class Comment
     {
-        public Comments()
+        public Comment()
         {
-            Id = GuidHelper.Gen();
+            Id = GuidHelper.Gen().ToString();
         }
 
-        public Guid Id { get; set; }
+        [Key]
+        [StringLength(100)]
+        public string Id { get; set; }
 
         /// <summary>
         /// 父Id
         /// </summary>
-        public Guid ParentId { get; set; }
+        [StringLength(100)]
+        public string ParentId { get; set; }
 
         /// <summary>
         /// 内容
@@ -40,15 +44,26 @@ namespace OneBlog.Data
         /// </summary>
         public bool IsSpam { get; set; }
 
+        public string Email { get; set; }
+
+        public string SiteUrl { get; set; }
+
+        public string DisplayName { get; set; }
+
         /// <summary>
         /// 评论时间
         /// </summary>
         public DateTime CreateDate { get; set; }
 
-        public virtual Posts Posts { get; set; }
+        /// <summary>
+        /// 作者Id (支持匿名）
+        /// </summary>
+        public string AuthorId { get; set; }
 
-        public virtual ApplicationUser Author { get; set; }
-
+        /// <summary>
+        /// 关联文章
+        /// </summary>
+        public virtual Post Posts { get; set; }
 
 
     }

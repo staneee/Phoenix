@@ -9,18 +9,18 @@ namespace OneBlog.Data.Models.ManageViewModels
 {
     public class DashboardViewModel
     {
-        private ApplicationDbContext _ctx;
+        private AppDbContext _ctx;
         private JsonService _jsonService;
 
         /// <summary>
         /// Dashboard vm
         /// </summary>
-        public DashboardViewModel(ApplicationDbContext ctx)
+        public DashboardViewModel(AppDbContext ctx)
         {
             _ctx = ctx;
             _jsonService = new JsonService(ctx);
             _posts = new List<PostItem>();
-            _comments = new List<Comments>();
+            _comments = new List<Comment>();
             _trash = new List<TrashItem>();
 
             LoadProperties();
@@ -29,7 +29,7 @@ namespace OneBlog.Data.Models.ManageViewModels
         #region Properties
 
         private List<PostItem> _posts;
-        private List<Comments> _comments;
+        private List<Comment> _comments;
         private List<TrashItem> _trash;
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace OneBlog.Data.Models.ManageViewModels
             get
             {
                 var comments = new List<CommentItem>();
-                var list = _ctx.Comments.Include(m=>m.Author).OrderByDescending(m => m.CreateDate).Take(5).ToList();
+                var list = _ctx.Comments.OrderByDescending(m => m.CreateDate).Take(5).ToList();
                 foreach (var c in list)
                 {
                     comments.Add(_jsonService.GetComment(c, _comments));

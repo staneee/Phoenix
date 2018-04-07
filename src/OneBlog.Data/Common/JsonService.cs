@@ -15,9 +15,9 @@ namespace OneBlog.Data.Common
     /// </summary>
     public class JsonService
     {
-        private readonly ApplicationDbContext _ctx;
+        private readonly AppDbContext _ctx;
 
-        public JsonService(ApplicationDbContext ctx)
+        public JsonService(AppDbContext ctx)
         {
             _ctx = ctx;
         }
@@ -27,7 +27,7 @@ namespace OneBlog.Data.Common
         /// </summary>
         /// <param name="post">Post</param>
         /// <returns>Json post</returns>
-        public PostItem GetPost(Posts post)
+        public PostItem GetPost(Post post)
         {
             var categories = _ctx.PostsInCategories.Where(m => m.PostsId == post.Id).Select(m => m.Categories).ToList();
 
@@ -77,7 +77,7 @@ namespace OneBlog.Data.Common
         /// </summary>
         /// <param name="post">Post</param>
         /// <returns>Json post detailed</returns>
-        public PostDetail GetPostDetail(Posts post)
+        public PostDetail GetPostDetail(Post post)
         {
             var categories = _ctx.PostsInCategories.Where(m => m.PostsId == post.Id).Select(m => m.Categories).ToList();
 
@@ -137,7 +137,7 @@ namespace OneBlog.Data.Common
         //    Page parent = null;
         //    SelectOption parentOption = null;
 
-        //    if (page.Parent != Guid.Empty)
+        //    if (page.Parent != string.Empty)
         //    {
         //        parent = Page.Pages.FirstOrDefault(p => p.Id.Equals(page.Parent));
         //        parentOption = new SelectOption { IsSelected = false, OptionName = parent.Title, OptionValue = parent.Id.ToString() };
@@ -167,7 +167,7 @@ namespace OneBlog.Data.Common
         //    Page parent = null;
         //    SelectOption parentOption = null;
 
-        //    if (page.Parent != Guid.Empty)
+        //    if (page.Parent != string.Empty)
         //    {
         //        parent = Page.Pages.FirstOrDefault(p => p.Id.Equals(page.Parent));
         //        parentOption = new SelectOption { IsSelected = false, OptionName = parent.Title, OptionValue = parent.Id.ToString() };
@@ -197,22 +197,19 @@ namespace OneBlog.Data.Common
         /// <param name="c">Comment</param>
         /// <param name="postComments">List of comments</param>
         /// <returns>Json comment</returns>
-        public CommentItem GetComment(Comments c, List<Comments> postComments)
+        public CommentItem GetComment(Comment c, List<Comment> postComments)
         {
             var jc = new CommentItem();
             jc.Id = c.Id;
             jc.IsApproved = c.IsApproved;
             jc.IsSpam = c.IsSpam;
             jc.IsPending = !c.IsApproved && !c.IsSpam;
+            //todo
             jc.Author = new Author()
             {
-                DisplayName = c.Author.DisplayName,
-                Email = c.Author.Email,
-                Id = c.Author.Id,
-                Name = c.Author.UserName,
-                Signature = c.Author.Signature,
-                SiteUrl = c.Author.SiteUrl,
-                Avatar = c.Author.Avatar
+                DisplayName = c.DisplayName,
+                Email = c.Email,
+                SiteUrl = c.SiteUrl,
             };
             jc.Content = c.Content;
             jc.Title = c.Content.Length < 80 ? c.Content : c.Content.Substring(0, 80) + "...";
@@ -228,7 +225,7 @@ namespace OneBlog.Data.Common
         /// </summary>
         /// <param name="c">Comment</param>
         /// <returns>Json comment detail</returns>
-        public CommentDetail GetCommentDetail(Comments c)
+        public CommentDetail GetCommentDetail(Comment c)
         {
             var jc = new CommentDetail();
             jc.Id = c.Id;
@@ -275,7 +272,7 @@ namespace OneBlog.Data.Common
 
         //#region Private methods
 
-        public List<CategoryItem> GetCategories(ICollection<Categories> categories)
+        public List<CategoryItem> GetCategories(ICollection<Category> categories)
         {
             if (categories == null || categories.Count == 0)
             {
@@ -297,11 +294,8 @@ namespace OneBlog.Data.Common
             return categoryList;
         }
 
-        SelectOption ItemParent(Guid? id)
+        SelectOption ItemParent(string id)
         {
-            if (id == null || id == Guid.Empty)
-                return null;
-
             var item = _ctx.Categories.Where(c => c.Id == id).FirstOrDefault();
             return new SelectOption { OptionName = item.Title, OptionValue = item.Id.ToString() };
         }
@@ -325,7 +319,7 @@ namespace OneBlog.Data.Common
             return items;
         }
 
-        static string[] GetComments(Posts post)
+        static string[] GetComments(Post post)
         {
             if (post.Comments == null || post.Comments.Count == 0)
             {

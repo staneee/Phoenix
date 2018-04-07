@@ -14,7 +14,7 @@ namespace OneBlog.Data.Models
         /// <summary>
         ///     Gets or sets the Comment Id
         /// </summary>
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         ///     If comment is pending
         /// </summary>

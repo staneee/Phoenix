@@ -22,7 +22,7 @@ namespace OneBlog.Data.Contracts
         /// </summary>
         /// <param name="id">Item id</param>
         /// <returns>Object</returns>
-        Data.Models.TagItem FindById(Guid id);
+        Data.Models.TagItem FindById(string id);
 
         List<TagItem> GetAll();
 
@@ -43,6 +43,6 @@ namespace OneBlog.Data.Contracts
         /// </summary>
         /// <param name="id">Item ID</param>
         /// <returns>True on success</returns>
-        bool Remove(Guid id);
+        bool Remove(string id);
     }
 }

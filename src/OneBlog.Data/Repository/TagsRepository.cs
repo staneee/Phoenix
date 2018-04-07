@@ -11,9 +11,9 @@ namespace OneBlog.Data.Repository
 {
     public class TagsRepository : BaseRepository, ITagsRepository
     {
-        private ApplicationDbContext _ctx;
+        private AppDbContext _ctx;
 
-        public TagsRepository(ApplicationDbContext ctx)
+        public TagsRepository(AppDbContext ctx)
         {
             _ctx = ctx;
         }
@@ -43,7 +43,7 @@ namespace OneBlog.Data.Repository
             return items.Skip(skip).Take(take);
         }
 
-        public TagItem FindById(Guid id)
+        public TagItem FindById(string id)
         {
             throw new NotImplementedException();
         }
@@ -53,7 +53,7 @@ namespace OneBlog.Data.Repository
             throw new NotImplementedException();
         }
 
-        public bool Remove(Guid id)
+        public bool Remove(string id)
         {
             throw new NotImplementedException();
         }

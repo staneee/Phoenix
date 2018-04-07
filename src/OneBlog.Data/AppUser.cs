@@ -7,7 +7,7 @@ namespace OneBlog.Data
     /// <summary>
     /// 用户
     /// </summary>
-    public class ApplicationUser : IdentityUser
+    public class AppUser : IdentityUser
     {
         /// <summary>
         /// 显示名称
@@ -39,11 +39,7 @@ namespace OneBlog.Data
         /// </summary>
         public string SiteUrl { get; set; }
 
-        public virtual IList<Posts> Posts { get; set; }
-
-        public virtual IList<Comments> Comments { get; set; }
-
-
+        public virtual IList<Post> Posts { get; set; }
 
     }
 }

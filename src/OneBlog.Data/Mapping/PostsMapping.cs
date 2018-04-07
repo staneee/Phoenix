@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace OneBlog.Data.Mapping
 {
 
-    public class PostsMapping : BaseEntityMapping<Posts>
+    public class PostsMapping : BaseEntityMapping<Post>
     {
 
-        public override void Execute(EntityTypeBuilder<Posts> builder)
+        public override void Execute(EntityTypeBuilder<Post> builder)
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).IsRequired();

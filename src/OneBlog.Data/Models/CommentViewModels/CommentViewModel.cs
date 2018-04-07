@@ -22,7 +22,7 @@ namespace OneBlog.Models.CommentViewModels
         public string Captcha { get; set; }
 
         [Required]
-        public Guid PostId { get; set; }
+        public string PostId { get; set; }
 
         public List<CommentItem> Comments
         {

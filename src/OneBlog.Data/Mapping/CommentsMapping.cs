@@ -8,15 +8,14 @@ using System.Threading.Tasks;
 namespace OneBlog.Data.Mapping
 {
 
-    public class CommentsMapping : BaseEntityMapping<Comments>
+    public class CommentsMapping : BaseEntityMapping<Comment>
     {
 
-        public override void Execute(EntityTypeBuilder<Comments> builder)
+        public override void Execute(EntityTypeBuilder<Comment> builder)
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).IsRequired();
             builder.HasOne(x => x.Posts).WithMany(x => x.Comments);
-            builder.HasOne(x => x.Author).WithMany(x => x.Comments);
         }
     }
 

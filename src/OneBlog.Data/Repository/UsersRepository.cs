@@ -13,13 +13,13 @@ namespace OneBlog.Data
     public class UsersRepository : IUsersRepository
     {
 
-        SignInManager<ApplicationUser> _signInManager;
-        UserManager<ApplicationUser> _userManager;
-        ApplicationDbContext _context;
+        SignInManager<AppUser> _signInManager;
+        UserManager<AppUser> _userManager;
+        AppDbContext _context;
 
         public UsersRepository(
-            ApplicationDbContext context,
-            SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager
+            AppDbContext context,
+            SignInManager<AppUser> signInManager, UserManager<AppUser> userManager
             )
         {
             _context = context;
@@ -29,7 +29,7 @@ namespace OneBlog.Data
 
         public UserItem Add(UserItem user)
         {
-            var appUser = new ApplicationUser()
+            var appUser = new AppUser()
             {
                 Email = user.Email,
                 UserName = user.UserName,
@@ -154,7 +154,7 @@ namespace OneBlog.Data
         }
 
 
-        Profile GetProfile(ApplicationUser user)
+        Profile GetProfile(AppUser user)
         {
             return new Profile()
             {
@@ -166,7 +166,7 @@ namespace OneBlog.Data
         }
 
 
-        List<RoleItem> GetRoles(ApplicationUser user)
+        List<RoleItem> GetRoles(AppUser user)
         {
             var userRoles = new List<RoleItem>();
             var task = _userManager.GetRolesAsync(user);

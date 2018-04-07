@@ -11,12 +11,12 @@ namespace OneBlog.Data
         {
         }
 
-        public Guid TagId { get; set; }
+        public string TagId { get; set; }
 
-        public Guid PostId { get; set; }
+        public string PostId { get; set; }
 
-        public virtual Posts Posts { get; set; }
+        public virtual Post Posts { get; set; }
 
-        public virtual Tags Tags { get; set; }
+        public virtual Tag Tags { get; set; }
     }
 }

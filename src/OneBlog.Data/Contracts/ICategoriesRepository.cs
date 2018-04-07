@@ -1,8 +1,6 @@
 ﻿using OneBlog.Data.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace OneBlog.Data.Contracts
 {
@@ -16,33 +14,35 @@ namespace OneBlog.Data.Contracts
         /// <param name="filter">Filter, for example filter=IsPublished,true,Author,Admin</param>
         /// <param name="order">Sort order, for example order=DateCreated,desc</param>
         /// <returns>List of items</returns>
-        IEnumerable<Data.Models.CategoryItem> Find(int take = 10, int skip = 0, string filter = "", string order = "");
+        IEnumerable<CategoryItem> Find(int take = 10, int skip = 0, string filter = "", string order = "");
         /// <summary>
         /// Get single item
         /// </summary>
         /// <param name="id">Item id</param>
         /// <returns>Object</returns>
-        Data.Models.CategoryItem FindById(Guid id);
-
+        CategoryItem FindById(string id);
+        /// <summary>
+        /// 获取所有
+        /// </summary>
+        /// <returns></returns>
         List<CategoryItem> GetAll();
-
         /// <summary>
         /// Add new item
         /// </summary>
         /// <param name="item">Post</param>
         /// <returns>Saved item with new ID</returns>
-        CategoryItem Add(Data.Models.CategoryItem item);
+        CategoryItem Add(CategoryItem item);
         /// <summary>
         /// Update post
         /// </summary>
         /// <param name="item">Item to update</param>
         /// <returns>True on success</returns>
-        bool Update(Data.Models.CategoryItem item);
+        bool Update(CategoryItem item);
         /// <summary>
         /// Delete item
         /// </summary>
         /// <param name="id">Item ID</param>
         /// <returns>True on success</returns>
-        bool Remove(Guid id);
+        bool Remove(string id);
     }
 }

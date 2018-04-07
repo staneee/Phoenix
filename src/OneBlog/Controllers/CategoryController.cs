@@ -25,13 +25,13 @@ namespace OneBlog.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Index(Guid id)
+        public IActionResult Index(string id)
         {
             return Pager(id, 1);
         }
 
         [HttpGet("{id}/{page}")]
-        public IActionResult Pager(Guid id, int page)
+        public IActionResult Pager(string id, int page)
         {
 
             var cacheKey = $"Categor_Index_{id.ToString()}_{page}";
