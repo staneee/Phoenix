@@ -296,6 +296,10 @@ namespace OneBlog.Data.Common
 
         SelectOption ItemParent(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null;
+            }
             var item = _ctx.Categories.Where(c => c.Id == id).FirstOrDefault();
             return new SelectOption { OptionName = item.Title, OptionValue = item.Id.ToString() };
         }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 
@@ -21,6 +22,7 @@ namespace OneBlog.Data
 
         public async Task SeedAsync()
         {
+            _ctx.Database.Migrate();
             // Seed User
             if (await _userMgr.FindByNameAsync("admin@chenrensong.com") == null)
             {
