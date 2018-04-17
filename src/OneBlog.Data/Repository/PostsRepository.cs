@@ -340,7 +340,7 @@ namespace OneBlog.Data
             if (pageSize > 100) { pageSize = 100; }
             List<Post> posts = null;
 
-            if (!string.IsNullOrEmpty(authorId))
+            if (string.IsNullOrEmpty(authorId))
             {
                 posts = _ctx.Posts.Include(m => m.Author).Include(m => m.Comments)
                 .Where(s => s.IsPublished)
