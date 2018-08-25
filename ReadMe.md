@@ -1,5 +1,5 @@
 
-## Phoenix (原OneBlog)
+## Phoenix 
 构建于 ASP.NET Core 2.1 的博客系统
  * 支持自定义主题
  * 使用百度的UEditor编辑器，如果你都不喜欢可以更换自定义编辑器
