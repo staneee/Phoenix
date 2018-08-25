@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
@@ -9,6 +10,6 @@ namespace OneBlog.Configuration
     {
         public string ConnectionString { get; set; }
 
-        public Microsoft.EntityFrameworkCore.DbType DbProvider { get; set; }
+        public DbProvider DbProvider { get; set; }
     }
 }
