@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.NodeServices;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -39,6 +40,7 @@ namespace Phoenix.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IOptions<AppSettings> _appSettings;
+        private INodeServices _nodeService;
         private ISession _session => _httpContextAccessor.HttpContext.Session;
 
         public RootController(IMailService mailService, UserManager<AppUser> userManager,
@@ -47,8 +49,10 @@ namespace Phoenix.Controllers
                               IMemoryCache memoryCache,
                               IViewRenderService viewRenderService,
                               IOptions<AppSettings> appSettings,
+                              INodeServices nodeService,
                               ILogger<RootController> logger)
         {
+            _nodeService = nodeService;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _viewRenderService = viewRenderService;
@@ -129,7 +133,7 @@ namespace Phoenix.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("post/{slug}")]
-        public IActionResult Post(string slug)
+        public async Task<IActionResult> Post(string slug)
         {
             try
             {
@@ -145,6 +149,15 @@ namespace Phoenix.Controllers
                 if (post != null)
                 {
                     post.Content = _postsRepository.FixContent(post.Content);
+                    try
+                    {
+                        ///转化Markdown
+                        post.Content = await _nodeService.InvokeAsync<string>("./Node/Parser", post.Content);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 return View(post);
             }

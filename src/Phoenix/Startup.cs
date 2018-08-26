@@ -60,6 +60,9 @@ namespace Phoenix
             svcs.Configure<QiniuSettings>(_conf.GetSection(nameof(QiniuSettings)));
             svcs.Configure<EditorSettings>(_conf.GetSection(nameof(EditorSettings)));
 
+
+            ///Node支持
+            svcs.AddNodeServices();
             svcs.AddSession();
             svcs.AddResponseCompression();
             svcs.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);

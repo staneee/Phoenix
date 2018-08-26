@@ -1,19 +1,22 @@
 ﻿
 //初始化编辑器
-var editor = UE.getEditor('txtContent', {
-    autoHeightEnabled: true,
-    autoFloatEnabled: true
-});
+//var editor = UE.getEditor('txtContent', {
+//    autoHeightEnabled: true,
+//    autoFloatEnabled: true
+//});
+
+
+var editor = new SimpleMDE({ element: document.getElementById("txtContent") });
 
 var editorGetHtml = function () {
-    return editor.getContent();
+    return editor.value();
 }
 
 var editorSetHtml = function (html) {
     if (!editor) {
         return;
     }
-    editor.setContent(html, false);
+    editor.value(html);
 }
 
 var getPostCover = function (index) {

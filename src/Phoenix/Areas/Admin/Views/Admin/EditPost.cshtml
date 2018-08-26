@@ -1,10 +1,10 @@
 ﻿
-<script type="text/javascript" src="~/3rdparty/ueditor/third-party/SyntaxHighlighter/shCore.js"> </script>
+<script type="text/javascript" src="~/3rdparty/ueditor/third-party/SyntaxHighlighter/shCore.js"></script>
 <link type="text/css" rel="stylesheet" href="~/3rdparty/ueditor/third-party/SyntaxHighlighter/shCoreDefault.min.css" />
 <link type="text/css" rel="stylesheet" href="~/admin/static/css/editor.css" />
 <link href="~/lib/cropper/dist/cropper.min.css" rel="stylesheet">
 <link href="~/lib/ladda/dist/ladda-themeless.min.css" rel="stylesheet">
-
+<link href="~/lib/simplemde/dist/simplemde.min.css" rel="stylesheet">
 
 <div class="content" ng-controller="PostEditorController">
     <button tabindex="-1" class="sidebar-toggle"><span></span><span></span><span></span></button>
@@ -62,7 +62,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="img-container">
-                            <img id="image" >
+                            <img id="image">
                         </div>
                         <div class="modal-buttons">
                             <button id="btnPostFile" data-color="green" data-style="expand-left" class="ladda-button btn btn-success">上传</button>
@@ -315,6 +315,7 @@
     </div>
 </div>
 <script src="~/lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript" src="~/lib/simplemde/dist/simplemde.min.js"></script>
 <script src="~/lib/cropper/dist/cropper.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
 <script src="~/lib/jqueri-ui/jquery-ui.min.js"></script>
@@ -340,14 +341,16 @@
 <script src="~/admin/app/common.js"></script>
 <script src="~/admin/app/data-service.js"></script>
 <script src="~/admin/app/editor/filemanagerController.js"></script>
+<script type="text/javascript" charset="utf-8" src="~/3rdparty/ueditor/editor.js"></script>
 
 
 @*<script src="~/admin/editors/tinymce/tinymce.min.js"></script>
     <script src="~/admin/editors/tinymce/editor.js"></script>*@
 
-<script type="text/javascript" charset="utf-8" src="~/3rdparty/ueditor/ueditor.config.js"></script>
-<script type="text/javascript" charset="utf-8" src="~/3rdparty/ueditor/ueditor.all.min.js"> </script>
-<script type="text/javascript" charset="utf-8" src="~/3rdparty/ueditor/lang/zh-cn/zh-cn.js"> </script>
+@*<script type="text/javascript" charset="utf-8" src="~/3rdparty/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="~/3rdparty/ueditor/ueditor.all.min.js"> </script>
+    <script type="text/javascript" charset="utf-8" src="~/3rdparty/ueditor/lang/zh-cn/zh-cn.js"> </script>
 
-<script type="text/javascript" charset="utf-8" src="~/3rdparty/ueditor/editor.js"> </script>
+*@
+
 
