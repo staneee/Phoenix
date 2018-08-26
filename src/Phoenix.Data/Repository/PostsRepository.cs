@@ -120,11 +120,11 @@ namespace Phoenix.Data
         /// </summary>
         /// <param name="id">Post id</param>
         /// <returns>Post object</returns>
-        public PostDetail FindById(string id)
+        public PostDetail FindById(Guid id)
         {
             try
             {
-                var item = _ctx.Posts.Include(m => m.Author).Include(m => m.Comments).FirstOrDefault(m => m.Id == id);
+                var item = _ctx.Posts.Include(m => m.Author).Include(m => m.Comments).FirstOrDefault(m => m.Id == id.ToString());
                 return _jsonService.GetPostDetail(item);
             }
             catch (Exception)
@@ -578,13 +578,14 @@ namespace Phoenix.Data
             return _ctx.Posts.Include(m => m.Author).FirstOrDefault(m => m.Author.Id == authorId && m.Title == title) != null;
         }
 
-        public Post GetPostBySlug(string slug)
+        public PostDetail GetPostBySlug(string slug)
         {
             var result = _ctx.Posts
                    .Where(s => s.Slug == slug || s.Slug == slug.Replace('_', '-'))
                    .FirstOrDefault();
-
-            return result;
+            return _jsonService.GetPostDetail(result);
         }
+
+ 
     }
 }

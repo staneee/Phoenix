@@ -2,15 +2,14 @@
 @using Phoenix.Configuration
 @model PostsResult
 @inject IOptions<AppSettings> AppSettings
-@{ 
+@{
     ViewBag.Tag = ViewContext.RouteData.Values["tag"];
-    ViewBag.Title = $"{ViewBag.Tag} - {AppSettings.Value.Title}";
-    ViewBag.ControllerName = "Tag";
 }
 
-<div class="content-title">
-    <h2>@ViewBag.Tag</h2>
+<div class="content-header">
+    <h2>TAG='@ViewBag.Tag'</h2>
 </div>
+<hr>
 
 @Html.Partial("_Loop", Model)
 

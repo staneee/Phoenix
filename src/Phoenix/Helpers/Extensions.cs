@@ -12,8 +12,6 @@ using Microsoft.Extensions.PlatformAbstractions;
 namespace Phoenix.Helpers
 {
 
-
-
     public static class PlatformServicesExtensions
     {
         public static string MapPath(this PlatformServices services, string path)

@@ -77,10 +77,10 @@ namespace Phoenix.Controllers
             var cacheKey = $"Root_Pager_{page}";
             string cached;
             PostsResult result = null;
-            if (_memoryCache.TryGetValue(cacheKey, out cached))
-            {
-                result = JsonConvert.DeserializeObject<PostsResult>(cached);
-            }
+            //if (_memoryCache.TryGetValue(cacheKey, out cached))
+            //{
+            //    result = JsonConvert.DeserializeObject<PostsResult>(cached);
+            //}
             if (result == null)
             {
                 result = _postsRepository.GetPosts(_appSettings.Value.PostPerPage, page);
@@ -121,46 +121,36 @@ namespace Phoenix.Controllers
             }
         }
 
+
+
         /// <summary>
         /// 文章详情页面
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("post/{id}")]
-        public IActionResult Post(string id)
+        [HttpGet("post/{slug}")]
+        public IActionResult Post(string slug)
         {
-            var cacheKey = $"Root_Post_{id}";
-            string cached;
-            PostDetail result = null;
-            if (_memoryCache.TryGetValue(cacheKey, out cached))
-            {
-                try
-                {
-                    result = JsonConvert.DeserializeObject<PostDetail>(cached);
-                }
-                catch
-                {
-                    result = null;
-                }
-            }
             try
             {
-                if (result == null)
+                PostDetail post = null;
+                if (Guid.TryParse(slug, out Guid id))
                 {
-                    var post = _postsRepository.FindById(id);
-                    if (post != null)
-                    {
-                        post.Content = _postsRepository.FixContent(post.Content);
-                        result = post;
-                        cached = JsonConvert.SerializeObject(result);
-                        _memoryCache.Set(cacheKey, cached, new MemoryCacheEntryOptions() { SlidingExpiration = TimeSpan.FromHours(12) });
-                    }
+                    post = _postsRepository.FindById(id);
                 }
-                return View(result);
+                else
+                {
+                    post = _postsRepository.GetPostBySlug(slug);
+                }
+                if (post != null)
+                {
+                    post.Content = _postsRepository.FixContent(post.Content);
+                }
+                return View(post);
             }
             catch
             {
-                _logger.LogWarning($"Couldn't find the ${id} post");
+                _logger.LogWarning($"Couldn't find the ${slug} post");
             }
             return Redirect("/");
         }

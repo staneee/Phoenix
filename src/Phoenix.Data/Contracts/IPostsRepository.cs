@@ -26,9 +26,9 @@ namespace Phoenix.Data.Contracts
 
         bool CheckIsOnly(string title, string authorId);
 
-        PostDetail FindById(string id);
+        PostDetail FindById(Guid id);
 
-        Post GetPostBySlug(string slug);
+        PostDetail GetPostBySlug(string slug);
 
         PostDetail Add(PostDetail post);
 

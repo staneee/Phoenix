@@ -3,7 +3,7 @@
 @inject UserManager<AppUser> UserManager
 @{
     var CurrentUser = await UserManager.GetUserAsync(User);
-    ViewBag.Title = $"{Model.Title} - 花纷飞";
+    ViewBag.Title = $"{Model.Title}";
     CategoryItem category = null;
     if (Model.Categories != null && Model.Categories.Count > 0)
     {
@@ -17,73 +17,99 @@
 }
 
 
-<article class="content-post" role="main">
-    <div class="content-post-title">
-        <h1>@Model.Title</h1>
-    </div>
-    <div class="content-post-meta">
-        <time class="post-date" datetime="@Model.DateCreated">@Model.DateCreated</time>
-    </div>
-    <div class="content-post-body">
-        @Html.Raw(Model.Content)
-    </div>
-    <div class="content-post-meta post-meta-tags">
-        @if (Model.Tags.Count > 0)
-        {
-            @foreach (var tag in Model.Tags)
+
+
+<article class="post post-single" id="post0">
+    <header class="post-header">
+        <h1 class="post-title">@Model.Title</h1>
+        <div class="post-meta">
+            <span class="post-author">By @Model.Author.DisplayName</span>
+            <span class="post-date">/ @Model.DateCreated</span>
+            @if (Model.Categories != null)
             {
-                <a asp-controller="Tag" asp-action="Index" class="tags__link" asp-route-tag="@tag.TagName">@tag.TagName</a>
+                <text>/</text>
+                <span class="post-category d-none d-sm-inline">
+                    @for (int i = 0; i < Model.Categories.Count; i++)
+                    {
+                        var cat = Model.Categories[i];
+                        <a href="~/category/@cat.Id">@cat.Title</a>
+                        if (i > 0)
+                        {
+                            <text>,</text>
+                        }
+                    }
+                </span>
             }
-        }
-    </div>
-    <div class="content-post-author">
-        <div class="tile">
-            <div class="tile-icon">
-                <figure class="avatar avatar-lg">
-                    <img src="@Model.Author.Avatar" />
-                </figure>
-            </div>
-            <div class="tile-content">
-                <p class="tile-title"><strong>@Model.Author.DisplayName</strong></p>
-                <p>阅读 <a asp-controller="Author" asp-action="Index" asp-route-id="@Model.Author.Id">@Model.Author.DisplayName</a> 更多内容.</p>
-            </div>
+            @*<div class="dropdown post-share float-md-right">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-share-alt"></i>share</a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item item-fb" href="https://www.addtoany.com/add_to/facebook?linkurl=http://francisdotbio.com/indigo/post/11&amp;linkname=A travel photographer's tips on getting the best travel pics" target="_blank"><i class="fa fa-facebook-square"></i>Facebook</a>
+                        <a class="dropdown-item item-tw" href="https://www.addtoany.com/add_to/twitter?linkurl=http://francisdotbio.com/indigo/post/11&amp;linkname=A travel photographer's tips on getting the best travel pics" target="_blank"><i class="fa fa-twitter-square"></i>Twitter</a>
+                        <a class="dropdown-item item-gp" href="https://www.addtoany.com/add_to/google_plus?linkurl=http://francisdotbio.com/indigo/post/11&amp;linkname=A travel photographer's tips on getting the best travel pics" target="_blank"><i class="fa fa-google-plus-square"></i>Google +</a>
+                        <a class="dropdown-item item-ln" href="https://www.addtoany.com/add_to/linkedin?linkurl=http://francisdotbio.com/indigo/post/11&amp;linkname=A travel photographer's tips on getting the best travel pics" target="_blank"><i class="fa fa-linkedin-square"></i>LinkedIn</a>
+                        <a class="dropdown-item item-pi" href="https://www.addtoany.com/add_to/pinterest?linkurl=http://francisdotbio.com/indigo/post/11&amp;linkname=A travel photographer's tips on getting the best travel pics" target="_blank"><i class="fa fa-pinterest-square"></i>Pinterest</a>
+                        <a class="dropdown-item item-em" href="https://www.addtoany.com/add_to/email?linkurl=http://francisdotbio.com/indigo/post/11&amp;linkname=A travel photographer's tips on getting the best travel pics" target="_blank"><i class="fa fa-envelope-square"></i>Email</a>
+                        <a class="dropdown-item item-em" href="https://www.addtoany.com/share?linkurl=http://francisdotbio.com/indigo/post/11&amp;linkname=A travel photographer's tips on getting the best travel pics" target="_blank"><i class="fa fa-plus-square"></i>Share...</a>
+                    </div>
+                </div>*@
+        </div>
+    </header>
+    <section class="post-body content-stlye">
+        @Html.Raw(Model.Content)
+    </section>
+    <footer class="post-footer">
+        <div class="post-tags">
+
+            @if (Model.Tags.Count > 0)
+            {
+                @foreach (var tag in Model.Tags)
+                {
+                    <a asp-controller="Tag" asp-action="Index" rel="tag" asp-route-tag="@tag.TagName">@tag.TagName</a>
+                }
+            }
+
         </div>
 
-    </div>
+    </footer>
+</article>
 
 
 
-    @await Component.InvokeAsync("Comment", new { id = Model.Id })
 
-    @section Styles {
-        @*<link rel="stylesheet" type="text/css" href="~/3rdparty/css/sh/shCore.css" />
-            <link rel="stylesheet" type="text/css" href="~/3rdparty/css/sh/shThemeDefault.css" />
-            <link href="~/lib/ladda/dist/ladda-themeless.min.css" rel="stylesheet">
-            <link href="~/lib/toastr/toastr.css" rel="stylesheet" />*@
-    }
 
-    @section Scripts {
-        @*<script type="text/javascript" src="~/3rdparty/js/sh/shCore.js"></script>*@
-        @*<script type="text/javascript" src="~/3rdparty/js/sh/shCore.js"></script>
-            <script type="text/javascript" src="~/3rdparty/js/sh/shBrushCSharp.js"></script>
-            <script type="text/javascript" src="~/3rdparty/js/sh/shBrushJScript.js"></script>
-            <script type="text/javascript" src="~/3rdparty/js/sh/shBrushXml.js"></script>
-            <script type="text/javascript" src="~/3rdparty/js/sh/shBrushCss.js"></script>
-            <script type="text/javascript" src="~/3rdparty/js/sh/shBrushSass.js"></script>
-            <script type="text/javascript" src="~/3rdparty/js/syntaxhighlight.js"></script>
 
-            <script type="text/javascript" src="~/lib/toastr/toastr.min.js"></script>
-            <script type="text/javascript" src="~/lib/ladda/dist/spin.min.js"></script>
-            <script type="text/javascript" src="~/lib/ladda/dist/ladda.min.js"></script>
-            <script type="text/javascript" src="~/lib/ladda/dist/ladda.jquery.min.js"></script>
+@*<div id="relatedPosts" class="well-global">
+        <h3 class="well-global-title">相关文章</h3>
+        <ul class="related-posts">
 
-            <environment names="Development">
-                <script type="text/javascript" src="~/js/comment.js"></script>
-            </environment>*@
+            <li class="related-posts-item">
+                <a href="/indigo/post/11">A travel photographer's tips on getting the best travel pics</a>
+                <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum libero vel orci sagittis portt</span>
+            </li>
 
-        <script type="text/javascript" src="~/lib/lazysizes/lazysizes.min.js" async=""></script>
-        <script type="text/javascript">
-        One.comments.postId = "@Model.Id";
-        SyntaxHighlighter.defaults['toolbar'] = false;
-        </script>
-    }
+            <li class="related-posts-item">
+                <a href="/indigo/post/10">What are the dangers of the amazon rain forest</a>
+                <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum libero vel orci sagittis portt</span>
+            </li>
+
+            <li class="related-posts-item">
+                <a href="/indigo/post/06">The best advanced surfing tips and techniques</a>
+                <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum libero vel orci sagittis portt</span>
+            </li>
+
+        </ul>
+    </div>*@
+
+
+
+
+@*@await Component.InvokeAsync("Comment", new { id = Model.Id })*@
+
+
+@section Styles {
+
+}
+
+@section Scripts {
+    <script type="text/javascript" src="~/lib/lazysizes/lazysizes.min.js" async=""></script>
+}

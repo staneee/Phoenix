@@ -1,4 +1,5 @@
 ﻿@using Microsoft.Extensions.Options
+@using Microsoft.AspNetCore.Routing
 @using Phoenix.Configuration
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
@@ -8,7 +9,16 @@
 @{
     var CurrentUser = await UserManager.GetUserAsync(User);
     var TopTags = NavigationHelper.GetTopTags();
-    ViewBag.Title =$"{AppSettings.Value.Title}  - {AppSettings.Value.Description}";
+    // ViewBag.Title = $"{AppSettings.Value.Title}  - {AppSettings.Value.Description}";
+
+    if (string.IsNullOrEmpty(ViewBag.Title))
+    {
+        ViewBag.Title = $"{AppSettings.Value.Title}";
+    }
+    else
+    {
+        ViewBag.Title = $"{ViewBag.Title} - {AppSettings.Value.Title}";
+    }
     var logoUrl = "/images/logo.png";
     var desc = AppSettings.Value.Description;
 
@@ -18,6 +28,24 @@
         desc = ViewBag.UserProfile.DisplayName;
         ViewBag.Title = $"{ViewBag.UserProfile.DisplayName} - {AppSettings.Value.Title}";
     }
+
+    //var ctrl = (string)ViewContext.RouteData.Values["controller"];
+    //var action = (string)ViewContext.RouteData.Values["action"];
+    var menu = NavigationHelper.GetMenu();
+    var isActive = new Func<bool, string>((a) =>
+    {
+        if (a) return "active";
+        return "";
+    });
+
+    var routeData = ViewContext.HttpContext.GetRouteData().Values;
+    var controller = (string)routeData["controller"];
+
+    var isController = new Func<string, string>((a) =>
+    {
+        if (a.Equals(controller, StringComparison.OrdinalIgnoreCase)) return "active";
+        return "";
+    });
 }
 <!DOCTYPE html>
 <html>
@@ -25,42 +53,125 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>@ViewBag.Title</title>
-    <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link href="~/dist/oneblog.min.css" asp-append-version="true" rel="stylesheet" />
+    <link href="~/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" rel="stylesheet" />
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+    <link href="~/css/style.css" asp-append-version="true" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet" />
     @RenderSection("Styles", required: false)
 </head>
 <body>
-    <section class="section">
-        <section class="section-sidebar">
-            <div class="sidebar-header">
-                <a href="/" class="sidebar-header-logo">
-                    <figure class="avatar avatar-lg">
-                        <img class="logo" src="@logoUrl">
-                    </figure>
-                </a>
-                <p>@desc</p>
-                @Html.Partial("_Menu")
+    <!-- START HEADER -->
+    <header class="blog-header">
+        <div class="container">
+            <nav class="d-flex">
+
+           
+                <h1 class="blog-logo my-auto">
+                    <a href="~/" style="color:white">@AppSettings.Value.Title</a>
+                </h1>
+                <ul class="blog-nav ml-lg-auto d-lg-block d-lg-flex my-lg-auto">
+                    <li><a href="~/">首页</a></li>
+                    @if (menu.Count > 0)
+                    {
+                        <li>
+                            <a href="#">分类</a>
+                            <ul>
+                                @foreach (var item in menu)
+                                {
+                                    <li><a class="@isActive(item.IsActive)" href="@item.Url">@item.Title</a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                    <li><a href="~/archive">归档</a></li>
+                </ul>
+                <button class="blog-nav-toggle hamburger d-block d-lg-none ml-auto my-auto hamburger--squeeze" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </nav>
+        </div>
+    </header>
+    <!-- END HEADER -->
+    <!-- START CONTENT -->
+    <div class="container blog-body">
+        <div class="row no-gutters">
+            <section class="col-lg-8 blog-content">
+                @RenderBody()
+            </section>
+            <aside class="col-lg-4 blog-sidebar">
+                <div id="widgetzone_Sidebar" class="widgetzone">
+                    @*<div class="Widget widget search">
+                        <div class="WidgetContent widget-content">
+                            <div id="searchbox">
+                                <input type="text" id="txt-d8e7d39f-d509-4106-b854-1c21195e7d8a" placeholder="搜索..." onkeypress="if (event.keyCode == 13) { BlogEngine.search('/indigo/', 'txt-d8e7d39f-d509-4106-b854-1c21195e7d8a'); return false; }" />
+                                <input type="button" onkeypress="BlogEngine.search('/indigo/', 'txt-d8e7d39f-d509-4106-b854-1c21195e7d8a');" onclick="BlogEngine.search('/indigo/', 'txt-d8e7d39f-d509-4106-b854-1c21195e7d8a');" id="searchbutton" value="Search" />
+                            </div>
+                        </div>
+                    </div>*@
+                    <div class="Widget widget tagcloud">
+                        <h4 class="WidgetHeader widget-header">Tags</h4>
+                        <div class="WidgetContent widget-content">
+                            <ul>
+                                @foreach (var tag in TopTags)
+                                {
+                                    <li><a href="~/tag/@tag.TagName" class="smallest" title="Tag: @tag.TagName">@tag.TagName</a> </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+    <!-- END CONTENT -->
+    <!-- START FOOTER -->
+    <footer class="blog-footer">
+        <div class="container">
+            <div class="blog-footer-end d-lg-flex text-center text-lg-left ">
+                <div class="blog-copyright my-lg-auto mb-3 mb-lg-0">
+                    <a class="blog-footer-logo" target="_blank" href="https://github.com/chenrensong/Phoenix">
+                        <img src="~/static/img/logo.png" alt="Phoenix" />
+                    </a>
+                    <p>
+                        <span>&copy; 2018</span>
+                        <span>Powered by <a href="https://github.com/chenrensong/Phoenix" target="_blank" title="Phoenix">Phoenix</a></span>
+                        <a href="http://www.miibeian.gov.cn/" target="_blank">京ICP备14060483号</a>
+                    </p>
+                </div>
+                <ul class="nav blog-social ml-lg-auto justify-content-center">
+                    <li><a data-toggle="tooltip" title="follow on WeiBo" target="_blank" href="https://weibo.com/songsongorg" rel="external nofollow"><i class="fa fa-weibo"></i></a></li>
+                    <li><a data-toggle="tooltip" title="follow on GitHub" target="_blank" href="https://github.com/chenrensong" rel="external nofollow"><i class="fa fa-git"></i></a></li>
+                    <li><a data-toggle="tooltip" title="Back up" id="back-up" target="_blank" href="#"><i class="fa fa-chevron-up"></i></a></li>
+                </ul>
             </div>
-            <div class="sidebar-footer"></div>
-        </section>
-        <section class="section-content" id="content" role="main">
-            @RenderBody()
-        </section>
-        <section class="section-footer">
-            <p><strong><a href="//huafenfei.com">花纷飞</a></strong> &copy; 2017 All Rights Reserved.</p>
-            <p>Published with <strong><a href="https://www.github.com/chenrensong/oneblog" target="_blank" title="Phoenix">Phoenix</a></strong>.<span class="text-red">&hearts;</span></p>
-            <p><a href="http://www.miibeian.gov.cn/" target="_blank">京ICP备14060483号</a>  </p>
-        </section>
-    </section>
+        </div>
+    </footer>
+    <!-- END FOOTER -->
+    @RenderSection("Scripts", required: false)
+
     <environment names="Development">
-        <script src="~/dist/oneblog.min.js" asp-append-version="true"></script>
+        <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdn.bootcss.com/popper.js/1.14.3/umd/popper.min.js"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+        @*<script type="text/javascript" src="~/lib/ladda/dist/ladda.min.js"></script>
+        <script type="text/javascript" src="~/lib/ladda/dist/spin.min.js"></script>
+        <script type="text/javascript" src="~/lib/ladda/dist/ladda.jquery.min.js"></script>*@
+        <script src="~/js/app.js"></script>
+        @*<script src="~/dist/oneblog.min.js" asp-append-version="true"></script>*@
     </environment>
     <environment names="Production,Staging">
-        <script src="~/dist/oneblog.min.js" asp-append-version="true"></script>
+        <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdn.bootcss.com/popper.js/1.14.3/umd/popper.min.js"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+        <script src="~/js/app.js"></script>
+
+        @*<script src="~/dist/oneblog.min.js" asp-append-version="true"></script>*@
     </environment>
-    @RenderSection("Scripts", required: false)
 
 </body>
 </html>

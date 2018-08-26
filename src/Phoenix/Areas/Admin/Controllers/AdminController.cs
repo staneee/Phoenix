@@ -130,7 +130,7 @@ namespace Phoenix.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("posts/{id?}")]
-        public IActionResult Posts(string id)
+        public IActionResult Posts(Guid id)
         {
             var result = _postsRepository.FindById(id);
             if (result == null)

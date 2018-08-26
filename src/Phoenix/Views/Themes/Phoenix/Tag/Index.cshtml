@@ -1,0 +1,16 @@
+﻿@using Microsoft.Extensions.Options
+@using Phoenix.Configuration
+@model PostsResult
+@inject IOptions<AppSettings> AppSettings
+@{ 
+    ViewBag.Tag = ViewContext.RouteData.Values["tag"];
+    ViewBag.Title = $"{ViewBag.Tag} - {AppSettings.Value.Title}";
+    ViewBag.ControllerName = "Tag";
+}
+
+<div class="content-title">
+    <h2>@ViewBag.Tag</h2>
+</div>
+
+@Html.Partial("_Loop", Model)
+

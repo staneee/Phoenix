@@ -26,6 +26,7 @@ namespace Phoenix.Controllers
         [HttpGet("{tag}/{page}")]
         public IActionResult Pager(string tag, int page)
         {
+            ViewBag.ControllerName = "Tag";
             return View("Index", _repo.GetPostsByTag(tag, _appSettings.Value.PostPerPage, page));
         }
     }

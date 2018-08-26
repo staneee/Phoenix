@@ -60,7 +60,8 @@ namespace Phoenix.Controllers
             ViewBag.ControllerName = "category";
             ViewBag.Id = id.ToString();
             ViewBag.Title = $"{result.Category}";
-            return View("_List", result);
+            ViewBag.Category = result.Category;
+            return View("Index", result);
         }
     }
 }
