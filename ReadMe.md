@@ -2,7 +2,7 @@
 ## Phoenix 
 构建于 ASP.NET Core 2.1 的博客系统
  * 支持自定义主题
- * 使用百度的UEditor编辑器，如果你都不喜欢可以更换自定义编辑器
+ * 使用Markdown编辑器
  * 支持多种常用数据库，默认使用SqlLite。
 
 ## Environment
