@@ -30,7 +30,8 @@ namespace Phoenix.Data.Models
         /// <summary>
         ///     Gets or sets the Author
         /// </summary>
-        public Author Author { get; set; }
+        public string DisplayName { get; set; }
+        public string Email { get; set; }
         /// <summary>
         ///     Whether this comment has nested comments
         /// </summary>

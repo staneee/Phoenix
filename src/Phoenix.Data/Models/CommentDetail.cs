@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Phoenix.Data.Models
+﻿namespace Phoenix.Data.Models
 {
     /// <summary>
     /// Blog comments
@@ -11,15 +6,15 @@ namespace Phoenix.Data.Models
     public class CommentDetail
     {
         /// <summary>
-        ///     Gets or sets the Comment Id
+        ///Gets or sets the Comment Id
         /// </summary>
         public string Id { get; set; }
         /// <summary>
-        ///     Parent comment Id
+        ///Parent comment Id
         /// </summary>
         public string ParentId { get; set; }
         /// <summary>
-        ///     Comment post ID
+        ///Comment post ID
         /// </summary>
         public string PostId { get; set; }
         /// <summary>
@@ -27,18 +22,21 @@ namespace Phoenix.Data.Models
         /// </summary>
         public string Title { get; set; }
         /// <summary>
-        ///     Gets or sets the author's website
+        /// Gets or sets the author's website
         /// </summary>
         public string Website { get; set; }
+        /// <summary>
+        /// User Name
+        /// </summary>
+        public string DislpayName { get; set; }
 
-        public AppUser Author { get; set; }
-
+        public string Email { get; set; }
         /// <summary>
         ///     Gets or sets the ip
         /// </summary>
         public string Ip { get; set; }
         /// <summary>
-        ///     Comment content
+        ///Comment content
         /// </summary>
         public string Content { get; set; }
     }

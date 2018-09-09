@@ -48,12 +48,14 @@ namespace Phoenix.Data.Contracts
                 //    }
                 //    item.Author = user;
                 //}
-                if (item.Author != null)
-                {
-                    c.AuthorId = item.Author.Id;
-                    c.DisplayName = item.Author.DisplayName;
-                    c.SiteUrl = item.Author.SiteUrl;
-                }
+                //if (item.Author != null)
+                //{
+                //    c.AuthorId = item.Author.Id;
+                //    c.DisplayName = item.Author.DisplayName;
+                //    c.SiteUrl = item.Author.SiteUrl;
+                //}
+                c.DisplayName = item.DislpayName;
+                c.Email = item.Email;
                 c.Ip = AspNetCoreHelper.GetRequestIP();
                 c.Posts = post;
                 _ctx.Comments.Add(c);
@@ -89,7 +91,7 @@ namespace Phoenix.Data.Contracts
 
         public List<CommentItem> FindByPostId(string postId)
         {
-            var comments = _ctx.Comments.Include(m => m.Posts).Where(m => m.Posts.Id == postId).ToList();
+            var comments = _ctx.Comments.Include(m => m.Posts).Where(m => m.Posts.Id == postId).OrderBy(m=>m.CreateDate).ToList();
             // instantiate object
             var nestedComments = new List<CommentItem>();
 
@@ -103,7 +105,7 @@ namespace Phoenix.Data.Contracts
                 commentTable.Add(comment.Id, commentIten);
 
                 // check if this is a child comment
-                if (comment.ParentId == string.Empty)
+                if (string.IsNullOrEmpty(comment.ParentId))
                 {
                     // root comment, so add it to the list
                     nestedComments.Add(commentIten);

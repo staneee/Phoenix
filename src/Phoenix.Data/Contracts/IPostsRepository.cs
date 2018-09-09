@@ -6,6 +6,8 @@ namespace Phoenix.Data.Contracts
 {
     public interface IPostsRepository
     {
+         List<Post> GetArchives();
+
         Pager<PostItem> Find(int take = 10, int skip = 0);
         /// <summary>
         /// 获取Post

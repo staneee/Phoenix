@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
 using Phoenix.Data.Contracts;
 using Phoenix.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Phoenix.Helpers
 {
@@ -29,7 +27,7 @@ namespace Phoenix.Helpers
 
         public IList<TagItem> GetTopTags()
         {
-            return _tagsRepository.Find(6).ToList();
+            return _tagsRepository.Find(30).ToList();
         }
 
         public List<MenuItem> GetMenu()

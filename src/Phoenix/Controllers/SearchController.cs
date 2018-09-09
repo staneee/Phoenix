@@ -29,8 +29,8 @@ namespace Phoenix.Controllers
         [HttpGet("{term}/{page:int?}")]
         public IActionResult Pager(string term, int page = 1)
         {
+            ViewBag.ControllerName = "search";
             ViewBag.Term = term;
-
             var results = _repo.GetPostsByTerm(term, 10, page);
             return View("Index", results);
         }

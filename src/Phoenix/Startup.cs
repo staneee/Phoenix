@@ -187,7 +187,6 @@ namespace Phoenix
             app.UseStaticFiles();
             // Support MetaWeblog API
             app.UseMetaWeblog("/livewriter");
-            app.UseMiddleware<OldSysMiddleware>();
             // Keep track of Active # of users for Vanity Project
             app.UseMiddleware<ActiveUsersMiddleware>();
 

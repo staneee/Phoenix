@@ -65,6 +65,13 @@ namespace Phoenix.Controllers
 
         }
 
+        [Route("archives")]
+        public IActionResult Archives()
+        {
+            var model = _postsRepository.GetArchives();
+            return View(model);
+        }
+
 
         [ResponseCache(VaryByHeader = "Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 10)]
         [HttpGet("")]
@@ -132,7 +139,7 @@ namespace Phoenix.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("post/{slug}")]
+        [HttpGet("{slug}")]
         public async Task<IActionResult> Post(string slug)
         {
             try
@@ -352,7 +359,7 @@ namespace Phoenix.Controllers
             }
             var replyToCommentId = Request.Form["hiddenReplyTo"].ToString();
             var post = _postsRepository.GetPost(model.PostId);
-            var commentDetail = new CommentDetail() { PostId = model.PostId, Author = await GetCurrentUserAsync(), Content = model.Content };
+            var commentDetail = new CommentDetail() { PostId = model.PostId, DislpayName = model.UserName, Email = model.Email, Content = model.Content };
             if (!string.IsNullOrEmpty(replyToCommentId))
             {
                 commentDetail.ParentId = replyToCommentId;

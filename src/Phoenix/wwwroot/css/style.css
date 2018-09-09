@@ -42,7 +42,7 @@ body {
 
 .container {
     width: 100%;
-    max-width: 80rem
+    /*max-width: 80rem*/
 }
 
 @media screen and (max-width: 991px) {
@@ -2379,12 +2379,8 @@ body {
 }
 
 #commentlist p#cancelReply a {
-    color: #fff;
     font-size: 0.875rem;
-    background-color: #666;
     display: inline-block;
-    padding: 0.25rem 1rem;
-    margin-left: 3.5rem
 }
 
 @media screen and (max-width: 48rem) {
@@ -3042,3 +3038,157 @@ body {
     font-weight: 100;
     text-align: center;
 }
+/* ==========================================================================
+  23. Archives
+  ========================================================================== */
+
+.archives {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+    .archives .archives-header {
+        margin-top: 40px;
+    }
+
+    .archives .archives-content::before, .archives .archives-content::after {
+        content: " ";
+        position: absolute;
+    }
+
+    .archives .archives-content::after {
+        top: 60px;
+        margin-left: 2px;
+        width: 4px;
+        height: 100%;
+        background: #f5f5f5;
+        z-index: 1;
+    }
+
+    .archives .archives-top {
+        position: absolute;
+        top: 50px;
+        width: 10px;
+        height: 10px;
+        margin-left: -1px;
+        background: #555;
+        opacity: 0.5;
+        border: 1px solid #fff;
+        border-radius: 50%;
+    }
+
+    .archives .archives-total {
+        position: relative;
+        top: 4px;
+        left: 20px;
+    }
+
+    .archives .archives-item {
+        position: relative;
+        margin: 30px 0;
+        overflow: hidden;
+        z-index: 2;
+    }
+
+    .archives .archives-year {
+        font-weight: bold;
+        margin: 10px 20px;
+    }
+
+        .archives .archives-year::before {
+            content: " ";
+            position: absolute;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            margin-left: -1px;
+            margin-top: 8px;
+            background: #555;
+            opacity: 0.5;
+            border: 1px solid #fff;
+            border-radius: 50%;
+        }
+
+.archives-info {
+    list-style: none;
+    font-size: 14px;
+    line-height: 20px;
+    position: relative;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out;
+    transition-delay: 0s;
+    transition-property: border;
+}
+
+    .archives-info .archives-info-meta {
+        margin-left: 20px;
+        padding: 4px 0;
+        overflow: hidden;
+        border-bottom: 1px dashed #ccc;
+    }
+
+        .archives-info .archives-info-meta::before {
+            content: " ";
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 8px;
+            height: 8px;
+            background: #bbb;
+            border-radius: 50%;
+            border: 1px solid #fff;
+            transition-duration: 0.2s;
+            transition-timing-function: ease-in-out;
+            transition-delay: 0s;
+            transition-property: background;
+        }
+
+        .archives-info .archives-info-meta:hover {
+            border-bottom: 1px dashed #2b579a;
+        }
+
+            .archives-info .archives-info-meta:hover::before {
+                background: #2b579a;
+            }
+
+        .archives-info .archives-info-meta a {
+            color: #2b579a;
+            text-decoration: none;
+        }
+
+    .archives-info time {
+        margin-right: 4px;
+        color: #999;
+        display: inline-block;
+    }
+
+/* ==========================================================================
+   15. TOC
+   ========================================================================== */
+
+.widget-toc-fixed {
+    top: 0px;
+    width: 340px;
+    position: fixed;
+    z-index: 2;
+}
+
+.toc {
+    padding-bottom: 10px;
+    overflow-y: auto;
+}
+
+    .toc a {
+        font-size: 14px;
+        color: #2b579a;
+    }
+
+        .toc a:hover {
+            color: #004e31;
+        }
+
+    .toc > li.active > a, .toc > li li.active > a {
+        color: #2b579a;
+        font-weight: 600;
+    }

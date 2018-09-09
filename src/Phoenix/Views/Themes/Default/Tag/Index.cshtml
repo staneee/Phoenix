@@ -5,11 +5,12 @@
 @{
     ViewBag.Tag = ViewContext.RouteData.Values["tag"];
 }
+<section class="col-lg-8 blog-content">
+    <div class="content-header">
+        <h2>TAG='@ViewBag.Tag'</h2>
+    </div>
+    <hr>
 
-<div class="content-header">
-    <h2>TAG='@ViewBag.Tag'</h2>
-</div>
-<hr>
-
-@Html.Partial("_Loop", Model)
+    @Html.Partial("_Loop", Model)
+</section>
 

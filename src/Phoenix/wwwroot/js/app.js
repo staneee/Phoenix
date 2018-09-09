@@ -107,47 +107,51 @@ BlogEngine = {
                 var result = data.Result;
                 var error = data.Error;
                 if (error) {
-                    toastr.error(error);
+                    BlogEngine.toggleCommentSavingIndicators(false);
+                    //toastr.error(error);
                     return;
                 }
                 var commentId = data.CommentId;
                 var commentCount = data.CommentCount;
-                var commentList = $("#isso-root");
+                var commentList = $("#commentlist");
                 // add comment html to the right place
-                var id = One.comments.replyToId ? One.comments.replyToId.val() : '';
+                var id = BlogEngine.comments.replyToId ? BlogEngine.comments.replyToId.val() : '';
                 if (id) {
-                    var parentComment = $('#isso-' + id);
-                    var textWrapper = $('#isso-wrapper-' + id, parentComment);
-                    textWrapper.html(textWrapper.html() + result);
+                    var parentComment = BlogEngine.$('id_' + id);
+                    //var textWrapper = $('#isso-wrapper-' + id, parentComment);
+                    //textWrapper.html(textWrapper.html() + result);
                 } else {
                     commentList.html(result + commentList.html());
                     commentList.css('display', 'block');
                 }
-                var commentForm = $('#isso-postbox');
-                var base = $("#comment");
-                var commentlist = $("#isso-root");
+                var commentForm = $('#comment-form');
+                //var base = $("#comment");
+                var commentlist = $("#commentlist");
                 commentForm.insertBefore(commentlist);
-                $("body,html").animate({ scrollTop: $('#isso-' + commentId).offset().top }, 1000);
-                shake($('#isso-' + commentId), "notice-red", 3);
+                //$("body,html").animate({ scrollTop: $('#isso-' + commentId).offset().top }, 1000);
+                //shake($('#isso-' + commentId), "notice-red", 3);
 
                 if ($('#cancelReply')) {
                     $('#cancelReply').css('display', 'none');
                 }
                 $("#captchaImg").click();
                 // reset form values
-                One.comments.contentBox.val("");
-                One.comments.replyToId.val("")
-                One.comments.captcha.val("");
+                BlogEngine.comments.contentBox.val("");
+                BlogEngine.comments.replyToId.val("")
+                BlogEngine.comments.captcha.val("");
+
+                BlogEngine.toggleCommentSavingIndicators(false);
             },
             error: function (data) {
                 //l.stop();
                 //l.remove();
                 if (!data) {
-                    toastr.error("评论失败,请重试~");
+                    //toastr.error("评论失败,请重试~");
                 } else {
                     var error = data.Error;
-                    toastr.error(error);
+                    //toastr.error(error);
                 }
+                BlogEngine.toggleCommentSavingIndicators(false);
                 $("#captchaImg").click();
             }
         });
@@ -161,19 +165,18 @@ BlogEngine = {
     }
     ,
     replyToComment: function (id) {
-
-
-  
-
         // set hidden .val()
-        BlogEngine.comments.replyToId.val() = id;
-
+        BlogEngine.comments.replyToId.val(id);
         // move comment form into position
         var commentForm = BlogEngine.$('comment-form');
         if (!id || id == '' || id == null || id == '00000000-0000-0000-0000-000000000000') {
             // move to after comment list
-            var base = BlogEngine.$("commentlist");
-            base.appendChild(commentForm);
+            var base = BlogEngine.$("comment-box");
+            if (base.childNodes.length > 0) {
+                base.insertBefore(commentForm, base.childNodes[0])
+            } else {
+                base.appendChild(commentForm);
+            }
             // hide cancel button
             BlogEngine.$('cancelReply').style.display = 'none';
         } else {
@@ -192,9 +195,13 @@ BlogEngine = {
                 parentComment.appendChild(replies);
             }
             replies.style.display = '';
-            replies.appendChild(commentForm);
-        }
 
+            if (replies.childNodes.length > 0) {
+                replies.insertBefore(commentForm, replies.childNodes[0]);
+            } else {
+                replies.appendChild(commentForm);
+            }
+        }
         BlogEngine.comments.nameBox.focus();
     }
     ,
@@ -219,7 +226,7 @@ BlogEngine = {
 
                 var commentList = BlogEngine.$("commentlist");
                 if (commentList.innerHTML.length < 10)
-                    commentList.innerHTML = "<h1 id='comment'>" + BlogEngineRes.i18n.comments + "</h1>"
+                    commentList.innerHTML = "<h1 id='comment'>Comment</h1>"
 
                 // add comment html to the right place
                 var id = BlogEngine.comments.replyToId ? BlogEngine.comments.replyToId.val() : '';
@@ -239,9 +246,9 @@ BlogEngine = {
                 BlogEngine.$("status").className = "success";
 
                 if (!BlogEngine.comments.moderation)
-                    BlogEngine.$("status").innerHTML = BlogEngineRes.i18n.commentWasSaved;
+                    BlogEngine.$("status").innerHTML = "commentWasSaved";
                 else
-                    BlogEngine.$("status").innerHTML = BlogEngineRes.i18n.commentWaitingModeration;
+                    BlogEngine.$("status").innerHTML = "commentWaitingModeration";
 
                 // move form back to bottom
                 var commentForm = BlogEngine.$('comment-form');
@@ -284,27 +291,9 @@ BlogEngine = {
             return false;
         }
 
-        //var bBuiltInValidationPasses = Page_ClientValidate('AddComment');
-        //var bNameIsValid = BlogEngine.comments.nameBox.val().length > 0;
-
-        //document.getElementById('spnNameRequired').style.display = bNameIsValid ? 'none' : '';
-        //var bAuthorNameIsValid = true;
-        //if (BlogEngine.comments.checkName) {
-        //    var author = BlogEngine.comments.postAuthor;
-        //    var visitor = BlogEngine.comments.nameBox.val();
-        //    bAuthorNameIsValid = !this.equal(author, visitor);
-        //}
-
-        //document.getElementById('spnChooseOtherName').style.display = bAuthorNameIsValid ? 'none' : '';
-        //if (bBuiltInValidationPasses && bNameIsValid && bAuthorNameIsValid) {
-        //    BlogEngine.addComment();
-        //    return true;
-        //}
-
         BlogEngine.addComment();
         return true;
     }
-
     ,
 
     addBbCode: function (v) {
@@ -340,8 +329,7 @@ BlogEngine = {
         var input = this.$(searchfield);
         var check = this.$("searchcomments");
 
-        var searchPageExtension = typeof BlogEngineRes.fileExtension === "undefined" ? ".aspx" : BlogEngineRes.fileExtension;
-        var search = "search" + searchPageExtension + "?q=" + encodeURIComponent(input.val());
+        var search = "search/" + encodeURIComponent(input.value);
         if (check != null && check.checked)
             search += "&comment=true";
 
@@ -728,7 +716,58 @@ $(function () {
             $(link).parent().css("display", "block");
         }
     }
+
+    $(window).scroll(function () {
+        var scrollerToTop = $('.backTop');
+        var scrollerTOC = $('.widget-toc');
+        document.documentElement.scrollTop + document.body.scrollTop > 200 ?
+            scrollerToTop.fadeIn() :
+            scrollerToTop.fadeOut();
+        document.documentElement.scrollTop + document.body.scrollTop > 250 ?
+            scrollerTOC.addClass("widget-toc-fixed") :
+            scrollerTOC.removeClass("widget-toc-fixed");
+    });
+
+    var toc = $('.toc');
+    // toc config
+    toc.toc({
+        content: ".post-body",
+        headings: "h2,h3,h4,h5"
+    });
+
+    if (toc.children().length == 0) $(".widget-toc").hide();
+
+    var tocHieght = toc.height();
+    var tocFixedHeight = $(window).height() - 192;
+    tocHieght > tocFixedHeight ?
+        toc.css('height', tocFixedHeight) :
+        toc.css('height', tocHieght)
+
+    $(window).resize(function () {
+        var tocFixedHeight = $(this).height() - 192;
+        tocHieght > tocFixedHeight ?
+            toc.css('height', tocFixedHeight) :
+            toc.css('height', tocHieght)
+    })
+
+    // add archives year
+    var yearArray = new Array();
+    $(".archives-item").each(function () {
+        var archivesYear = $(this).attr("date");
+        yearArray.push(archivesYear);
+    });
+    var uniqueYear = $.unique(yearArray);
+    for (var i = 0; i < uniqueYear.length; i++) {
+        var html = "<div class='archives-item fadeInDown animated'>" +
+            "<div class='archives-year'>" +
+            "<h3><time datetime='" + uniqueYear[i] + "'>" + uniqueYear[i] + "</time></h3>" +
+            "</div></div>";
+        $("[date='" + uniqueYear[i] + "']:first").before(html);
+    }
 });
+
+
+
 
 // back up
 $("#back-up").on('click', function (e) {

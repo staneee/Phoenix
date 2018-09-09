@@ -46,6 +46,8 @@
         if (a.Equals(controller, StringComparison.OrdinalIgnoreCase)) return "active";
         return "";
     });
+
+    var searchId = Guid.NewGuid();
 }
 <!DOCTYPE html>
 <html>
@@ -62,13 +64,13 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet" />
     @RenderSection("Styles", required: false)
 </head>
-<body>
+<body data-spy="scroll" data-target="#tocScrollspy">
     <!-- START HEADER -->
     <header class="blog-header">
         <div class="container">
             <nav class="d-flex">
 
-           
+
                 <h1 class="blog-logo my-auto">
                     <a href="~/" style="color:white">@AppSettings.Value.Title</a>
                 </h1>
@@ -86,7 +88,7 @@
                             </ul>
                         </li>
                     }
-                    <li><a href="~/archive">归档</a></li>
+                    <li><a href="~/archives">归档</a></li>
                 </ul>
                 <button class="blog-nav-toggle hamburger d-block d-lg-none ml-auto my-auto hamburger--squeeze" type="button">
                     <span class="hamburger-box">
@@ -100,19 +102,19 @@
     <!-- START CONTENT -->
     <div class="container blog-body">
         <div class="row no-gutters">
-            <section class="col-lg-8 blog-content">
-                @RenderBody()
-            </section>
+
+            @RenderBody()
+
             <aside class="col-lg-4 blog-sidebar">
                 <div id="widgetzone_Sidebar" class="widgetzone">
-                    @*<div class="Widget widget search">
+                    <div class="Widget widget search">
                         <div class="WidgetContent widget-content">
                             <div id="searchbox">
-                                <input type="text" id="txt-d8e7d39f-d509-4106-b854-1c21195e7d8a" placeholder="搜索..." onkeypress="if (event.keyCode == 13) { BlogEngine.search('/indigo/', 'txt-d8e7d39f-d509-4106-b854-1c21195e7d8a'); return false; }" />
-                                <input type="button" onkeypress="BlogEngine.search('/indigo/', 'txt-d8e7d39f-d509-4106-b854-1c21195e7d8a');" onclick="BlogEngine.search('/indigo/', 'txt-d8e7d39f-d509-4106-b854-1c21195e7d8a');" id="searchbutton" value="Search" />
+                                <input type="text" id="txt-@searchId" placeholder="搜索..." onkeypress="if (event.keyCode == 13) { BlogEngine.search('/', 'txt-@searchId'); return false; }" />
+                                <input type="button" onkeypress="BlogEngine.search('/', 'txt-@searchId');" onclick="BlogEngine.search('/', 'txt-@searchId');" id="searchbutton" value="Search" />
                             </div>
                         </div>
-                    </div>*@
+                    </div>
                     <div class="Widget widget tagcloud">
                         <h4 class="WidgetHeader widget-header">Tags</h4>
                         <div class="WidgetContent widget-content">
@@ -124,6 +126,18 @@
                             </ul>
                         </div>
                     </div>
+
+                    <div class="Widget widget widget-toc">
+                        <h4 class="WidgetHeader widget-header">文章目录</h4>
+                        <div class="WidgetContent widget-content">
+                            <nav id="tocScrollspy">
+                                <ul id="toc" class="toc"></ul>
+                            </nav>
+                        </div>
+                    </div>
+
+
+
                 </div>
             </aside>
         </div>
@@ -158,18 +172,15 @@
         <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdn.bootcss.com/popper.js/1.14.3/umd/popper.min.js"></script>
         <script src="https://cdn.bootcss.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-        @*<script type="text/javascript" src="~/lib/ladda/dist/ladda.min.js"></script>
-        <script type="text/javascript" src="~/lib/ladda/dist/spin.min.js"></script>
-        <script type="text/javascript" src="~/lib/ladda/dist/ladda.jquery.min.js"></script>*@
+        <script src="~/js/jquery.toc.js"></script>
         <script src="~/js/app.js"></script>
-        @*<script src="~/dist/oneblog.min.js" asp-append-version="true"></script>*@
     </environment>
     <environment names="Production,Staging">
         <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdn.bootcss.com/popper.js/1.14.3/umd/popper.min.js"></script>
         <script src="https://cdn.bootcss.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+        <script src="~/js/jquery.toc.js"></script>
         <script src="~/js/app.js"></script>
-
         @*<script src="~/dist/oneblog.min.js" asp-append-version="true"></script>*@
     </environment>
 

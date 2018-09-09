@@ -205,12 +205,14 @@ namespace Phoenix.Data.Common
             jc.IsSpam = c.IsSpam;
             jc.IsPending = !c.IsApproved && !c.IsSpam;
             //todo
-            jc.Author = new Author()
-            {
-                DisplayName = c.DisplayName,
-                Email = c.Email,
-                SiteUrl = c.SiteUrl,
-            };
+            jc.DisplayName = c.DisplayName;
+            jc.Email = c.Email;
+            //jc.Author = new Author()
+            //{
+            //    DisplayName = c.DisplayName,
+            //    Email = c.Email,
+            //    SiteUrl = c.SiteUrl,
+            //};
             jc.Content = c.Content;
             jc.Title = c.Content.Length < 80 ? c.Content : c.Content.Substring(0, 80) + "...";
             jc.DateCreated = c.CreateDate.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);

@@ -2,9 +2,11 @@
 @using Phoenix.Configuration
 @model PostsResult
 @inject IOptions<AppSettings> AppSettings
-<div class="content-header">
-    <h2>@ViewBag.Category</h2>
-</div>
-<hr>
-@Html.Partial("_Loop", Model)
+<section class="col-lg-8 blog-content">
+    <div class="content-header">
+        <h2>@ViewBag.Category</h2>
+    </div>
+    <hr>
+    @Html.Partial("_Loop", Model)
+ </section>
 

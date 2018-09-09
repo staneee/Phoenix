@@ -30,6 +30,13 @@ namespace Phoenix.Data
             _userManager = userManager;
         }
 
+        public List<Post> GetArchives()
+        {
+            var list = _ctx.Posts.Where(m => m.IsPublished).OrderByDescending(m => m.DatePublished).ToList();
+
+            return list;
+        }
+
         public Pager<PostItem> Find(int take = 10, int skip = 0)
         {
             var count = _ctx.Posts.Include(m => m.Author).Include(m => m.Comments).Count();
@@ -586,6 +593,6 @@ namespace Phoenix.Data
             return _jsonService.GetPostDetail(result);
         }
 
- 
+
     }
 }
