@@ -92,8 +92,8 @@ BlogEngine = {
         var captcha = BlogEngine.comments.captcha.val();
 
         var replyToId = BlogEngine.comments.replyToId ? BlogEngine.comments.replyToId.val() : "";
-        //var l = Ladda.create(document.getElementById('btnSaveAjax'));
-        //l.start();
+        var l = Ladda.create(document.getElementById('btnSaveAjax'));
+        l.start();
         var formData = $("#comment-form input,textarea").map(function () {
             return ($(this).attr("name") + '=' + $(this).val());
         }).get().join("&");
@@ -102,13 +102,14 @@ BlogEngine = {
             method: "POST",
             data: formData,
             success: function (data) {
-                //l.stop();
-                //l.remove();
+                l.stop();
+                l.remove();
                 var result = data.Result;
                 var error = data.Error;
                 if (error) {
                     BlogEngine.toggleCommentSavingIndicators(false);
-                    //toastr.error(error);
+                    BlogEngine.$("status").innerHTML = error;
+                    BlogEngine.$("status").className = "warning";
                     return;
                 }
                 var commentId = data.CommentId;
@@ -118,10 +119,10 @@ BlogEngine = {
                 var id = BlogEngine.comments.replyToId ? BlogEngine.comments.replyToId.val() : '';
                 if (id) {
                     var parentComment = BlogEngine.$('id_' + id);
-                    //var textWrapper = $('#isso-wrapper-' + id, parentComment);
-                    //textWrapper.html(textWrapper.html() + result);
+                    var replies = $('#replies_' + id, parentComment);
+                    replies.html(replies.html() + result);
                 } else {
-                    commentList.html(result + commentList.html());
+                    commentList.html(commentList.html() + result);
                     commentList.css('display', 'block');
                 }
                 var commentForm = $('#comment-form');
@@ -139,17 +140,20 @@ BlogEngine = {
                 BlogEngine.comments.contentBox.val("");
                 BlogEngine.comments.replyToId.val("")
                 BlogEngine.comments.captcha.val("");
-
+                BlogEngine.$("status").innerHTML = "Thank you for the feedback.";
+                BlogEngine.$("status").className = "success";
                 BlogEngine.toggleCommentSavingIndicators(false);
             },
             error: function (data) {
-                //l.stop();
-                //l.remove();
+                l.stop();
+                l.remove();
                 if (!data) {
-                    //toastr.error("评论失败,请重试~");
+                    BlogEngine.$("status").innerHTML = "评论失败,请重试~";
+                    BlogEngine.$("status").className = "warning";
                 } else {
                     var error = data.Error;
-                    //toastr.error(error);
+                    BlogEngine.$("status").innerHTML = error;
+                    BlogEngine.$("status").className = "warning";
                 }
                 BlogEngine.toggleCommentSavingIndicators(false);
                 $("#captchaImg").click();
@@ -295,6 +299,7 @@ BlogEngine = {
         return true;
     }
     ,
+   
 
     addBbCode: function (v) {
         try {

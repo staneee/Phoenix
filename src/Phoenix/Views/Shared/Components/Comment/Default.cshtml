@@ -5,8 +5,6 @@
 }
 
 <div id="comment-box" class="well-global">
-
-
     <div id="comment-form">
         @*<span id="status" class="success">Thank you for the feedback. The comment is now awaiting moderation</span>*@
         <span id="status"></span>
@@ -27,7 +25,8 @@
                 </label>
                 <input class="simpleCaptcha" type="text" tabindex="0" maxlength="30" placeholder="Enter the captcha code" asp-for="Captcha">
             </div>
-            <input type="button" id="btnSaveAjax" value="保存评论" class="btn btn-primary btn-block" onclick="return BlogEngine.validateAndSubmitCommentForm()">
+
+            <button id="btnSaveAjax" onclick="return BlogEngine.validateAndSubmitCommentForm()" type="submit" class="btn btn-primary btn-block ladda-button" data-style="expand-left">保存评论</button>
 
             <input type="hidden" name="hiddenReplyTo" id="hiddenReplyTo" />
             @Html.HiddenFor(m => m.PostId)
@@ -43,60 +42,7 @@
         {
             @Html.Partial("_Comment", item)
         }
-
     </div>
-
 </div>
-
-
-
-
-
-@*@if (CurrentUser == null)
-    {
-        <div class="content-post-comments">
-            <div class="btn btn-primary btn-block"><span><a asp-action="Login" asp-controller="Account" asp-route-ReturnUrl="@Context.Request.Path">登录</a> 来参与讨论</span></div>
-        </div>
-
-    }
-    <section id="isso-thread" class="content-post-comments">
-        <h4>@Model.Comments.Count 条评论</h4>
-
-        @if (CurrentUser != null)
-        {
-            <div class="isso-postbox">
-                <form id="commentForm" role="form">
-                    <div class="form-wrapper">
-                        <div class="textarea-wrapper">
-                            <textarea class="textarea placeholder" contenteditable="true" data-val="true" data-val-required="The Content field is required." id="Content" name="Content" placeholder="在此输入评论 (最少3个字符)"></textarea>
-                        </div>
-                        <section class="auth-section">
-                            <p class="input-wrapper"><input data-val="true" type="text" value="@CurrentUser.DisplayName" readonly></p>
-                            <p class="input-wrapper">@Html.TextBoxFor(m => m.Captcha, new { placeholder = "验证码" })</p>
-
-                            <p class="input-wrapper">
-                                <img id="captchaImg" style="max-width:none;" onclick="this.src ='@Url.Action("Captcha", "Root")?t='+ Math.floor(Math.random() * 10000);" src="@Url.Action("Captcha", "Root")" />
-                            </p>
-                            <p class="post-action">
-                                <button id="btnSaveAjax" onclick="One.addComment();return false;" type="submit" class="btn btn-success ladda-button" data-style="expand-left">提交</button>
-                            </p>
-                            <input type="hidden" name="hiddenReplyTo" id="hiddenReplyTo" />
-                            @Html.HiddenFor(m => m.PostId)
-                        </section>
-                    </div>
-                </form>
-            </div>
-        }
-
-
-
-        <div id="isso-root">
-            @foreach (var item in Model.Comments)
-            {
-                @Html.Partial("_Comment", item)
-            }
-        </div>
-    </section>*@
-
 
 

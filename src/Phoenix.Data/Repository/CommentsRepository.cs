@@ -130,8 +130,8 @@ namespace Phoenix.Data.Contracts
                     }
                 }
             }
-            //降序排序
-            return nestedComments.OrderByDescending(m => m.DateCreated).ToList();
+            //升序排序
+            return nestedComments.OrderBy(m => m.DateCreated).ToList();
         }
 
         public CommentsResult Get()

@@ -147,7 +147,7 @@ namespace Phoenix
             // Add Https - renable once Azure Certs work
             if (_env.IsProduction())
             {
-                mvcBuilder.AddMvcOptions(options => options.Filters.Add(new RequireHttpsAttribute()));
+                mvcBuilder.AddMvcOptions(options => options.Filters.Add(new RequireOnlyDoaminAttribute() { Host = "chenrensong.com" }));
             }
 
             builder.Populate(svcs);
@@ -158,7 +158,7 @@ namespace Phoenix
         public void Configure(IApplicationBuilder app,
                               ILoggerFactory loggerFactory,
                               IMailService mailService,
-                              IServiceScopeFactory scopeFactory,IOptions<AppSettings> appSettings)
+                              IServiceScopeFactory scopeFactory, IOptions<AppSettings> appSettings)
         {
 
             //app.UseTimedJob();
